@@ -1,7 +1,10 @@
 ﻿using ImageGalleries.WebApi.Data;
+using ImageGalleries.WebApi.Models;
 using ImageGalleries.WebApi.Services.RandomGenerators;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ImageGalleries.WebApi.Controllers
 {
@@ -24,10 +27,13 @@ namespace ImageGalleries.WebApi.Controllers
         };
 
         private readonly IRandomGenerator _randomGenerator;
+        private readonly UserManager<User> _userRepository;
 
-        public WeatherForecastController(IRandomGenerator randomGenerator)
+        public WeatherForecastController(IRandomGenerator randomGenerator,
+            UserManager<User> userRepository)
         {
             _randomGenerator = randomGenerator;
+            _userRepository = userRepository;
         }
 
         private IEnumerable<Forecast> GetForecast(int count)
@@ -48,8 +54,19 @@ namespace ImageGalleries.WebApi.Controllers
 
         [Authorize]
         [HttpGet("authorized-only")]
-        public IActionResult GetAuthorizedOnlyForecast()
+        public async Task<IActionResult> GetAuthorizedOnlyForecast()
         {
+            var userId = HttpContext.User.FindFirstValue("UserId") ?? string.Empty;
+            var user = await _userRepository.FindByIdAsync(userId);
+            if (user != null) 
+            {
+                return Ok(new
+                {
+                    Forecast = GetForecast(2),
+                    User = user
+                });
+            }
+
             return Ok(GetForecast(2));
         }
 

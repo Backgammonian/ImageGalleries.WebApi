@@ -1,6 +1,6 @@
 ﻿using ImageGalleries.WebApi.Data;
 using ImageGalleries.WebApi.Models;
-using ImageGalleries.WebApi.Repositories.Interfaces;
+using ImageGalleries.WebApi.Repositories.RefreshTokens;
 using ImageGalleries.WebApi.Requests;
 using ImageGalleries.WebApi.Responses;
 using ImageGalleries.WebApi.Services.Authenticators;
