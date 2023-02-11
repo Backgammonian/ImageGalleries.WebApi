@@ -1,4 +1,5 @@
-﻿using ImageGalleries.WebApi.Models;
+﻿using ImageGalleries.WebApi.Data;
+using ImageGalleries.WebApi.Models;
 using ImageGalleries.WebApi.Repositories.Interfaces;
 using ImageGalleries.WebApi.Requests;
 using ImageGalleries.WebApi.Responses;
@@ -42,6 +43,7 @@ namespace ImageGalleries.WebApi.Controllers
             return BadRequest(new ErrorResponse(errorMessages));
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
         {
@@ -68,20 +70,22 @@ namespace ImageGalleries.WebApi.Controllers
                 var errorDescriber = new IdentityErrorDescriber();
                 var primaryError = result.Errors.FirstOrDefault();
 
-                if (primaryError?.Code == nameof(errorDescriber.DuplicateEmail))
+                switch (primaryError?.Code)
                 {
-                    return Conflict(new ErrorResponse("Email already exists."));
-                }
-                else 
-                if (primaryError?.Code == nameof(errorDescriber.DuplicateUserName))
-                {
-                    return Conflict(new ErrorResponse("Username already exists."));
+                    case nameof(errorDescriber.DuplicateEmail):
+                        return Conflict(new ErrorResponse("Email already exists."));
+
+                    case nameof(errorDescriber.DuplicateUserName):
+                        return Conflict(new ErrorResponse("Username already exists."));
                 }
             }
+
+            await _userRepository.AddToRoleAsync(registrationUser, Roles.UserRole);
 
             return Ok();
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
@@ -102,11 +106,14 @@ namespace ImageGalleries.WebApi.Controllers
                 return Unauthorized();
             }
 
-            var response = await _authenticator.Authenticate(user);
+            var roles = await _userRepository.GetRolesAsync(user);
+            var role = roles.FirstOrDefault();
+            var response = await _authenticator.Authenticate(user, role);
 
             return Ok(response);
         }
 
+        [Authorize]
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh([FromBody] RefreshRequest refreshRequest)
         {
@@ -135,7 +142,9 @@ namespace ImageGalleries.WebApi.Controllers
                 return NotFound(new ErrorResponse("User not found."));
             }
 
-            var response = await _authenticator.Authenticate(user);
+            var roles = await _userRepository.GetRolesAsync(user);
+            var role = roles.FirstOrDefault();
+            var response = await _authenticator.Authenticate(user, role);
 
             return Ok(response);
         }

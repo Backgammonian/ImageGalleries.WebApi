@@ -1,23 +1,96 @@
-﻿namespace ImageGalleries.WebApi.Data
+﻿using ImageGalleries.WebApi.Models;
+using Microsoft.AspNetCore.Identity;
+
+namespace ImageGalleries.WebApi.Data
 {
     public class Seeder
     {
-        private readonly DataContext _dataContext;
+        private readonly IApplicationBuilder _applicationBuilder;
 
-        public Seeder(DataContext dataContext)
+        public Seeder(IApplicationBuilder applicationBuilder)
         {
-            _dataContext = dataContext;
+            _applicationBuilder = applicationBuilder;
         }
 
         public async Task Seed()
         {
-            //TODO
+            using var serviceScope = _applicationBuilder.ApplicationServices.CreateScope();
+            var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            _dataContext.Database.EnsureCreated();
+            if (!await roleManager.RoleExistsAsync(Roles.AdminRole))
+            {
+                await roleManager.CreateAsync(new IdentityRole(Roles.AdminRole));
+            }
+            if (!await roleManager.RoleExistsAsync(Roles.UserRole))
+            {
+                await roleManager.CreateAsync(new IdentityRole(Roles.UserRole));
+            }
 
-            //await _dataContext.Users.AddRangeAsync(users);
+            var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            var adminEmail = "admin@mail.com";
+            var admin = await userManager.FindByEmailAsync(adminEmail);
+            if (admin == null)
+            {
+                var newAdmin = new User()
+                {
+                    Id = "admin",
+                    UserName = "Admin",
+                    Email = adminEmail,
+                    EmailConfirmed = true
+                };
 
-            await _dataContext.SaveChangesAsync();
+                var result = await userManager.CreateAsync(newAdmin, "12345678");
+                await userManager.AddToRoleAsync(newAdmin, Roles.AdminRole);
+
+                admin = newAdmin;
+            }
+
+            var users = new List<User>();
+            var userInfos = new[] 
+            {
+                ("white@mail.com", "Mr.White", "12345678"),
+                ("pink@mail.com", "Mr.Pink", "12345678") 
+            };
+
+            var i = 1;
+            foreach (var userInfo in userInfos)
+            {
+                var email = userInfo.Item1;
+                var nickname = userInfo.Item2;
+                var password = userInfo.Item3;
+
+                var user = await userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    var newUser = new User()
+                    {
+                        Id = "user" + i,
+                        UserName = nickname,
+                        Email = email,
+                        EmailConfirmed = true
+                    };
+
+                    await userManager.CreateAsync(newUser, password);
+                    await userManager.AddToRoleAsync(newUser, Roles.UserRole);
+                    users.Add(newUser);
+                }
+
+                i += 1;
+            }
+
+            var dataContext = serviceScope.ServiceProvider.GetService<DataContext>();
+            if (dataContext == null)
+            {
+                Console.WriteLine("(SeedData) Can't get the Data Context!");
+
+                return;
+            }
+
+            dataContext.Database.EnsureCreated();
+
+            //await _dataContext.Table.AddRangeAsync(items);
+
+            await dataContext.SaveChangesAsync();
         }
     }
 }

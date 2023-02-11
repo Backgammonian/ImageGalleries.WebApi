@@ -15,13 +15,14 @@ namespace ImageGalleries.WebApi.Services.TokenGenerators
             _tokenGenerator = tokenGenerator;
         }
 
-        public AccessToken GenerateToken(User user)
+        public AccessToken GenerateToken(User user, string role)
         {
             var claims = new List<Claim>()
             {
                 new Claim("UserId", user.Id),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Role, role),
             };
 
             var expirationTime = DateTime.UtcNow

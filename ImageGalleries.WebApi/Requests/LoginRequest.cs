@@ -5,6 +5,7 @@ namespace ImageGalleries.WebApi.Requests
     public class LoginRequest
     {
         [Required]
+        [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
         [Required]
