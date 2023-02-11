@@ -49,7 +49,7 @@ namespace ImageGalleries.WebApi.Data
             var userInfos = new[] 
             {
                 ("white@mail.com", "Mr.White", "12345678"),
-                ("pink@mail.com", "Mr.Pink", "12345678") 
+                //("pink@mail.com", "Mr.Pink", "12345678") 
             };
 
             var i = 1;

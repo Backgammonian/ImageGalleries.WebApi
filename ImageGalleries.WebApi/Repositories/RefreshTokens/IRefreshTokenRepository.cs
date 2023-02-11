@@ -1,6 +1,6 @@
 ﻿using ImageGalleries.WebApi.Models;
 
-namespace ImageGalleries.WebApi.Repositories.Interfaces
+namespace ImageGalleries.WebApi.Repositories.RefreshTokens
 {
     public interface IRefreshTokenRepository
     {

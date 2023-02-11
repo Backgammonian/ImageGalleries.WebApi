@@ -1,12 +1,13 @@
 using ImageGalleries.WebApi.Data;
 using ImageGalleries.WebApi.Models;
-using ImageGalleries.WebApi.Repositories;
-using ImageGalleries.WebApi.Repositories.Interfaces;
+using ImageGalleries.WebApi.Repositories.RefreshTokens;
 using ImageGalleries.WebApi.Services.Authenticators;
+using ImageGalleries.WebApi.Services.PhotoServices;
 using ImageGalleries.WebApi.Services.RandomGenerators;
 using ImageGalleries.WebApi.Services.TokenGenerators;
 using ImageGalleries.WebApi.Services.TokenValidators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -26,6 +27,13 @@ namespace ImageGalleries.WebApi
                 .AddJsonOptions(x =>
                     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
 
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.ValueLengthLimit = int.MaxValue;
+                options.MultipartBodyLengthLimit = int.MaxValue;
+                options.MemoryBufferThreshold = int.MaxValue;
+            });
+
             builder.Services.AddIdentityCore<User>(o =>
             {
                 o.User.RequireUniqueEmail = true;
@@ -42,8 +50,9 @@ namespace ImageGalleries.WebApi
 
             var authenticationConfiguration = new AuthenticationConfiguration();
             builder.Configuration.Bind("Authentication", authenticationConfiguration);
-
             builder.Services.AddSingleton(authenticationConfiguration);
+
+            builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
             builder.Services.AddDbContext<DataContext>(o =>
             {
@@ -57,6 +66,7 @@ namespace ImageGalleries.WebApi
             builder.Services.AddSingleton<TokenGenerator>();
             builder.Services.AddScoped<IRefreshTokenRepository, DatabaseRefreshTokenRepository>();
             builder.Services.AddSingleton<IRandomGenerator, RandomGenerator>();
+            builder.Services.AddScoped<IPhotoService, PhotoService>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(o =>

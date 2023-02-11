@@ -1,9 +1,8 @@
 ﻿using ImageGalleries.WebApi.Data;
 using ImageGalleries.WebApi.Models;
-using ImageGalleries.WebApi.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace ImageGalleries.WebApi.Repositories
+namespace ImageGalleries.WebApi.Repositories.RefreshTokens
 {
     public class DatabaseRefreshTokenRepository : IRefreshTokenRepository
     {
