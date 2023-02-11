@@ -7,6 +7,7 @@ using ImageGalleries.WebApi.Services.RandomGenerators;
 using ImageGalleries.WebApi.Services.TokenGenerators;
 using ImageGalleries.WebApi.Services.TokenValidators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -28,12 +29,16 @@ namespace ImageGalleries.WebApi
             builder.Services.AddIdentityCore<User>(o =>
             {
                 o.User.RequireUniqueEmail = true;
-
+                o.User.AllowedUserNameCharacters =
+                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-()";
                 o.Password.RequireDigit = false;
                 o.Password.RequireNonAlphanumeric = false;
                 o.Password.RequireUppercase = false;
+                o.Password.RequireLowercase = false;
                 o.Password.RequiredLength = 0;
-            }).AddEntityFrameworkStores<DataContext>();
+                o.Password.RequiredUniqueChars = 0;
+            }).AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<DataContext>();
 
             var authenticationConfiguration = new AuthenticationConfiguration();
             builder.Configuration.Bind("Authentication", authenticationConfiguration);
@@ -70,7 +75,7 @@ namespace ImageGalleries.WebApi
             });
 
             builder.Services.AddEndpointsApiExplorer();
-            var webApiName = "ImageGalleries WebAPI";
+            var webApiName = "Image Galleries WebAPI";
             builder.Services.AddSwaggerGen(o =>
             {
                 o.SwaggerDoc("V1", new OpenApiInfo
@@ -136,16 +141,7 @@ namespace ImageGalleries.WebApi
         {
             Console.WriteLine("(SeedData) Seeding the database");
 
-            using var serviceScope = app.ApplicationServices.CreateScope();
-            var dataContext = serviceScope.ServiceProvider.GetService<DataContext>();
-            if (dataContext == null)
-            {
-                Console.WriteLine("(SeedData) Can't seed the database!");
-
-                return;
-            }
-
-            var seeder = new Seeder(dataContext);
+            var seeder = new Seeder(app);
             await seeder.Seed();
         }
     }
