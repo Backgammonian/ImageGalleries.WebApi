@@ -1,6 +1,8 @@
 using ImageGalleries.WebApi.Data;
 using ImageGalleries.WebApi.Models;
+using ImageGalleries.WebApi.Repositories.Pictures;
 using ImageGalleries.WebApi.Repositories.RefreshTokens;
+using ImageGalleries.WebApi.Repositories.Users;
 using ImageGalleries.WebApi.Services.Authenticators;
 using ImageGalleries.WebApi.Services.PhotoServices;
 using ImageGalleries.WebApi.Services.RandomGenerators;
@@ -46,7 +48,8 @@ namespace ImageGalleries.WebApi
                 o.Password.RequiredLength = 0;
                 o.Password.RequiredUniqueChars = 0;
             }).AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<DataContext>();
+                .AddEntityFrameworkStores<DataContext>()
+                .AddDefaultTokenProviders();
 
             var authenticationConfiguration = new AuthenticationConfiguration();
             builder.Configuration.Bind("Authentication", authenticationConfiguration);
@@ -66,12 +69,13 @@ namespace ImageGalleries.WebApi
             builder.Services.AddSingleton<TokenGenerator>();
             builder.Services.AddScoped<IRefreshTokenRepository, DatabaseRefreshTokenRepository>();
             builder.Services.AddSingleton<IRandomGenerator, RandomGenerator>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IPhotoService, PhotoService>();
+            builder.Services.AddScoped<IPictureRepository, PictureRepository>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(o =>
             {
-                o.RequireHttpsMetadata = false; //development only!
                 o.TokenValidationParameters = new TokenValidationParameters()
                 {
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationConfiguration.AccessTokenSecret)),

@@ -11,9 +11,7 @@ namespace ImageGalleries.WebApi.Data
         }
 
         public DbSet<RefreshToken> RefreshTokens { get; set; }
-        public DbSet<ProfilePicture> ProfilePictures { get; set; }
         public DbSet<Picture> Pictures { get; set; }
-        public DbSet<PreviewPicture> Previews { get; set; }
         public DbSet<Gallery> Galleries { get; set; }
         public DbSet<PictureGallery> PictureGalleries { get; set; }
         public DbSet<Tag> Tags { get; set; }

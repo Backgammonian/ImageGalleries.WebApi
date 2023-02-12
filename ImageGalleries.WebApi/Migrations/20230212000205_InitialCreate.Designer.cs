@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ImageGalleries.WebApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230211044201_InitialCreate")]
+    [Migration("20230212000205_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -77,6 +77,10 @@ namespace ImageGalleries.WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("PreviewUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("UploadTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -123,52 +127,6 @@ namespace ImageGalleries.WebApi.Migrations
                     b.HasIndex("TagId");
 
                     b.ToTable("PictureTags");
-                });
-
-            modelBuilder.Entity("ImageGalleries.WebApi.Models.PreviewPicture", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PictureId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("UploadTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PictureId");
-
-                    b.ToTable("Previews");
-                });
-
-            modelBuilder.Entity("ImageGalleries.WebApi.Models.ProfilePicture", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("UploadTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ProfilePictures");
                 });
 
             modelBuilder.Entity("ImageGalleries.WebApi.Models.RefreshToken", b =>
@@ -264,6 +222,10 @@ namespace ImageGalleries.WebApi.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("ProfilePictureUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
@@ -498,28 +460,6 @@ namespace ImageGalleries.WebApi.Migrations
                     b.Navigation("Tag");
                 });
 
-            modelBuilder.Entity("ImageGalleries.WebApi.Models.PreviewPicture", b =>
-                {
-                    b.HasOne("ImageGalleries.WebApi.Models.Picture", "Picture")
-                        .WithMany("Previews")
-                        .HasForeignKey("PictureId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Picture");
-                });
-
-            modelBuilder.Entity("ImageGalleries.WebApi.Models.ProfilePicture", b =>
-                {
-                    b.HasOne("ImageGalleries.WebApi.Models.User", "User")
-                        .WithMany("ProfilePictures")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("ImageGalleries.WebApi.Models.RefreshToken", b =>
                 {
                     b.HasOne("ImageGalleries.WebApi.Models.User", "User")
@@ -614,8 +554,6 @@ namespace ImageGalleries.WebApi.Migrations
 
                     b.Navigation("PictureTags");
 
-                    b.Navigation("Previews");
-
                     b.Navigation("Scores");
                 });
 
@@ -631,8 +569,6 @@ namespace ImageGalleries.WebApi.Migrations
                     b.Navigation("Galleries");
 
                     b.Navigation("Pictures");
-
-                    b.Navigation("ProfilePictures");
 
                     b.Navigation("RefreshTokens");
 

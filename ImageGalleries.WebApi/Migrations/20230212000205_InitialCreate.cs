@@ -31,6 +31,7 @@ namespace ImageGalleries.WebApi.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
+                    ProfilePictureUrl = table.Column<string>(type: "text", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -195,35 +196,16 @@ namespace ImageGalleries.WebApi.Migrations
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
                     Url = table.Column<string>(type: "text", nullable: false),
+                    PreviewUrl = table.Column<string>(type: "text", nullable: false),
                     UploadTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false)
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Pictures", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Pictures_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ProfilePictures",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    Url = table.Column<string>(type: "text", nullable: false),
-                    UploadTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProfilePictures", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ProfilePictures_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -323,26 +305,6 @@ namespace ImageGalleries.WebApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Previews",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    Url = table.Column<string>(type: "text", nullable: false),
-                    UploadTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    PictureId = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Previews", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Previews_Pictures_PictureId",
-                        column: x => x.PictureId,
-                        principalTable: "Pictures",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Scores",
                 columns: table => new
                 {
@@ -430,16 +392,6 @@ namespace ImageGalleries.WebApi.Migrations
                 column: "TagId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Previews_PictureId",
-                table: "Previews",
-                column: "PictureId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProfilePictures_UserId",
-                table: "ProfilePictures",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_UserId",
                 table: "RefreshTokens",
                 column: "UserId");
@@ -476,12 +428,6 @@ namespace ImageGalleries.WebApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "PictureTags");
-
-            migrationBuilder.DropTable(
-                name: "Previews");
-
-            migrationBuilder.DropTable(
-                name: "ProfilePictures");
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");
