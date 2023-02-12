@@ -14,29 +14,29 @@ using System.Security.Claims;
 namespace ImageGalleries.WebApi.Controllers
 {
     [ApiController]
-    [Route("auth")]
-    public class AuthenticationController : Controller
+    [Route("account")]
+    public class AccountController : Controller
     {
-        private readonly UserManager<User> _userRepository;
+        private readonly UserManager<User> _userManager;
         private readonly Authenticator _authenticator;
         private readonly RefreshTokenValidator _refreshTokenValidator;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IRandomGenerator _randomGenerator;
 
-        public AuthenticationController(UserManager<User> userRepository,
+        public AccountController(UserManager<User> userManager,
             Authenticator authenticator,
             RefreshTokenValidator refreshTokenValidator,
             IRefreshTokenRepository refreshTokenRepository,
             IRandomGenerator randomGenerator)
         {
-            _userRepository = userRepository;
+            _userManager = userManager;
             _authenticator = authenticator;
             _refreshTokenValidator = refreshTokenValidator;
             _refreshTokenRepository = refreshTokenRepository;
             _randomGenerator = randomGenerator;
         }
 
-        private IActionResult BadRequestModelState()
+        private IActionResult GetBadRequestModelState()
         {
             var errorMessages = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
 
@@ -49,7 +49,7 @@ namespace ImageGalleries.WebApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequestModelState();
+                return GetBadRequestModelState();
             }
 
             if (registerRequest.Password != registerRequest.ConfirmPassword)
@@ -61,10 +61,11 @@ namespace ImageGalleries.WebApi.Controllers
             {
                 Id = _randomGenerator.GetRandomId(),
                 Email = registerRequest.Email,
+                EmailConfirmed = true,
                 UserName = registerRequest.Username
             };
 
-            var result = await _userRepository.CreateAsync(registrationUser, registerRequest.Password);
+            var result = await _userManager.CreateAsync(registrationUser, registerRequest.Password);
             if (!result.Succeeded)
             {
                 var errorDescriber = new IdentityErrorDescriber();
@@ -80,7 +81,7 @@ namespace ImageGalleries.WebApi.Controllers
                 }
             }
 
-            await _userRepository.AddToRoleAsync(registrationUser, Roles.UserRole);
+            await _userManager.AddToRoleAsync(registrationUser, Roles.UserRole);
 
             return Ok();
         }
@@ -91,22 +92,22 @@ namespace ImageGalleries.WebApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequestModelState();
+                return GetBadRequestModelState();
             }
 
-            var user = await _userRepository.FindByEmailAsync(loginRequest.Email);
+            var user = await _userManager.FindByEmailAsync(loginRequest.Email);
             if (user == null)
             {
                 return Unauthorized();
             }
 
-            bool isCorrectPassword = await _userRepository.CheckPasswordAsync(user, loginRequest.Password);
+            bool isCorrectPassword = await _userManager.CheckPasswordAsync(user, loginRequest.Password);
             if (!isCorrectPassword)
             {
                 return Unauthorized();
             }
 
-            var roles = await _userRepository.GetRolesAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
             var role = roles.FirstOrDefault();
             var response = await _authenticator.Authenticate(user, role);
 
@@ -119,7 +120,7 @@ namespace ImageGalleries.WebApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequestModelState();
+                return GetBadRequestModelState();
             }
 
             bool isValidRefreshToken = _refreshTokenValidator.Validate(refreshRequest.RefreshToken);
@@ -136,17 +137,55 @@ namespace ImageGalleries.WebApi.Controllers
 
             await _refreshTokenRepository.Delete(refreshTokenDTO.Id);
 
-            var user = await _userRepository.FindByIdAsync(refreshTokenDTO.UserId.ToString());
+            var user = await _userManager.FindByIdAsync(refreshTokenDTO.UserId.ToString());
             if (user == null)
             {
                 return NotFound(new ErrorResponse("User not found."));
             }
 
-            var roles = await _userRepository.GetRolesAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
             var role = roles.FirstOrDefault();
             var response = await _authenticator.Authenticate(user, role);
 
             return Ok(response);
+        }
+
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest changePasswordRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return GetBadRequestModelState();
+            }
+
+            if (changePasswordRequest.NewPassword != changePasswordRequest.ConfirmNewPassword)
+            {
+                return BadRequest("New password doesn't match");
+            }
+
+            var userId = HttpContext.User.FindFirstValue("UserId") ?? string.Empty;
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            var passwordCheck = await _userManager.CheckPasswordAsync(user, changePasswordRequest.OldPassword);
+            if (!passwordCheck)
+            {
+                return BadRequest("Old password doesn't match");
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, changePasswordRequest.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest("Can't change the password!");
+            }
+
+            return Ok();
         }
 
         [Authorize]

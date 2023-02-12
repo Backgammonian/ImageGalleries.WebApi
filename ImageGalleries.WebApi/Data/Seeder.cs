@@ -14,6 +14,7 @@ namespace ImageGalleries.WebApi.Data
 
         public async Task Seed()
         {
+            #region Seeding roles and users
             using var serviceScope = _applicationBuilder.ApplicationServices.CreateScope();
             var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
@@ -49,7 +50,7 @@ namespace ImageGalleries.WebApi.Data
             var userInfos = new[] 
             {
                 ("white@mail.com", "Mr.White", "12345678"),
-                //("pink@mail.com", "Mr.Pink", "12345678") 
+                ("pink@mail.com", "Mr.Pink", "12345678") 
             };
 
             var i = 1;
@@ -77,7 +78,9 @@ namespace ImageGalleries.WebApi.Data
 
                 i += 1;
             }
+            #endregion
 
+            #region Seeding the data
             var dataContext = serviceScope.ServiceProvider.GetService<DataContext>();
             if (dataContext == null)
             {
@@ -86,11 +89,12 @@ namespace ImageGalleries.WebApi.Data
                 return;
             }
 
+            //TODO
+
             dataContext.Database.EnsureCreated();
-
             //await _dataContext.Table.AddRangeAsync(items);
-
             await dataContext.SaveChangesAsync();
+            #endregion
         }
     }
 }
