@@ -7,5 +7,6 @@
         public Picture? Picture { get; set; }
         public User? User { get; set; }
         public string Content { get; set; } = string.Empty;
+        public DateTime CreationDate { get; set; }
     }
 }

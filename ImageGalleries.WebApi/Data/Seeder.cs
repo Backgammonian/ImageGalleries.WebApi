@@ -37,7 +37,8 @@ namespace ImageGalleries.WebApi.Data
                     Id = "admin",
                     UserName = "Admin",
                     Email = adminEmail,
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    RegisterDate = DateTime.UtcNow
                 };
 
                 var result = await userManager.CreateAsync(newAdmin, "12345678");
@@ -53,9 +54,10 @@ namespace ImageGalleries.WebApi.Data
                 ("pink@mail.com", "Mr.Pink", "12345678") 
             };
 
-            var i = 1;
-            foreach (var userInfo in userInfos)
+            for (int i = 0; i < userInfos.Length; i++)
             {
+                var userInfo = userInfos[i];
+
                 var email = userInfo.Item1;
                 var nickname = userInfo.Item2;
                 var password = userInfo.Item3;
@@ -65,7 +67,7 @@ namespace ImageGalleries.WebApi.Data
                 {
                     var newUser = new User()
                     {
-                        Id = "user" + i,
+                        Id = "user" + (i + 1),
                         UserName = nickname,
                         Email = email,
                         EmailConfirmed = true
@@ -75,8 +77,6 @@ namespace ImageGalleries.WebApi.Data
                     await userManager.AddToRoleAsync(newUser, Roles.UserRole);
                     users.Add(newUser);
                 }
-
-                i += 1;
             }
             #endregion
 

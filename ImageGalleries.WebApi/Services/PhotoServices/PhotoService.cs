@@ -18,7 +18,7 @@ namespace ImageGalleries.WebApi.Services.PhotoServices
             _cloundinary = new Cloudinary(acc);
         }
 
-        public async Task<ImageUploadResult> AddPhotoAsync(IFormFile file)
+        public async Task<ImageUploadResult> AddPhoto(IFormFile file)
         {
             var uploadResult = new ImageUploadResult();
             if (file.Length > 0)
@@ -36,7 +36,7 @@ namespace ImageGalleries.WebApi.Services.PhotoServices
             return uploadResult;
         }
 
-        public async Task<ImageUploadResult> AddPreviewPhotoAsync(IFormFile file)
+        public async Task<ImageUploadResult> AddPreviewPhoto(IFormFile file)
         {
             var uploadResult = new ImageUploadResult();
             if (file.Length > 0)
@@ -49,6 +49,7 @@ namespace ImageGalleries.WebApi.Services.PhotoServices
                     .Height(500)
                     .Width(500)
                     .Crop("fill")
+                    .Gravity("face")
                 };
 
                 uploadResult = await _cloundinary.UploadAsync(uploadParams);
@@ -57,7 +58,7 @@ namespace ImageGalleries.WebApi.Services.PhotoServices
             return uploadResult;
         }
 
-        public async Task<DeletionResult> DeletePhotoAsync(string url)
+        public async Task<DeletionResult> DeletePhoto(string url)
         {
             var publicId = url.Split('/').Last().Split('.')[0];
             var deleteParams = new DeletionParams(publicId);

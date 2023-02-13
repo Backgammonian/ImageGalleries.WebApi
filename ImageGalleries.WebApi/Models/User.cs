@@ -4,6 +4,7 @@ namespace ImageGalleries.WebApi.Models
 {
     public class User : IdentityUser
     {
+        public DateTime RegisterDate { get; set; }
         public string ProfilePictureUrl { get; set; } = string.Empty;
         public ICollection<RefreshToken>? RefreshTokens { get; set; }
         public ICollection<Picture>? Pictures { get; set; }
