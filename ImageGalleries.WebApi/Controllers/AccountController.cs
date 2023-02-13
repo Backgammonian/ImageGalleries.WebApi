@@ -62,7 +62,8 @@ namespace ImageGalleries.WebApi.Controllers
                 Id = _randomGenerator.GetRandomId(),
                 Email = registerRequest.Email,
                 EmailConfirmed = true,
-                UserName = registerRequest.Username
+                UserName = registerRequest.Username,
+                RegisterDate = DateTime.UtcNow
             };
 
             var result = await _userManager.CreateAsync(registrationUser, registerRequest.Password);

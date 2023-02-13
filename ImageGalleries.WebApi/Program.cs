@@ -1,7 +1,11 @@
 using ImageGalleries.WebApi.Data;
 using ImageGalleries.WebApi.Models;
+using ImageGalleries.WebApi.Repositories.Comments;
+using ImageGalleries.WebApi.Repositories.Galleries;
 using ImageGalleries.WebApi.Repositories.Pictures;
 using ImageGalleries.WebApi.Repositories.RefreshTokens;
+using ImageGalleries.WebApi.Repositories.Scores;
+using ImageGalleries.WebApi.Repositories.Tags;
 using ImageGalleries.WebApi.Repositories.Users;
 using ImageGalleries.WebApi.Services.Authenticators;
 using ImageGalleries.WebApi.Services.PhotoServices;
@@ -72,6 +76,10 @@ namespace ImageGalleries.WebApi
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IPhotoService, PhotoService>();
             builder.Services.AddScoped<IPictureRepository, PictureRepository>();
+            builder.Services.AddScoped<IGalleryRepository, GalleryRepository>();
+            builder.Services.AddScoped<ITagRepository, TagRepository>();
+            builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+            builder.Services.AddScoped<IScoreRepository, ScoreRepository>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(o =>

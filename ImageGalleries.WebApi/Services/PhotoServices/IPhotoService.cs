@@ -4,8 +4,8 @@ namespace ImageGalleries.WebApi.Services.PhotoServices
 {
     public interface IPhotoService
     {
-        Task<ImageUploadResult> AddPhotoAsync(IFormFile file);
-        Task<ImageUploadResult> AddPreviewPhotoAsync(IFormFile file);
-        Task<DeletionResult> DeletePhotoAsync(string url);
+        Task<ImageUploadResult> AddPhoto(IFormFile file);
+        Task<ImageUploadResult> AddPreviewPhoto(IFormFile file);
+        Task<DeletionResult> DeletePhoto(string url);
     }
 }

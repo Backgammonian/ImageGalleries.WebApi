@@ -21,18 +21,23 @@ namespace ImageGalleries.WebApi.Repositories.Pictures
             _randomGenerator = randomGenerator;
         }
 
+        public async Task<User?> GetUploaderOfPicture(string pictureId)
+        {
+            var picture = await GetPicture(pictureId);
+            if (picture == null)
+            {
+                return null;
+            }
+
+            return await _dataContext.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == picture.UserId);
+        }
+
         public async Task<ICollection<Picture>> GetPictures()
         {
             return await _dataContext.Pictures
                 .AsNoTracking()
-                .ToListAsync();
-        }
-
-        public async Task<ICollection<Picture>> GetPicturesOfUser(string userId)
-        {
-            return await _dataContext.Pictures
-                .AsNoTracking()
-                .Where(x => x.UserId == userId)
                 .ToListAsync();
         }
 
@@ -41,6 +46,92 @@ namespace ImageGalleries.WebApi.Repositories.Pictures
             return await _dataContext.Pictures
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == pictureId);
+        }
+
+        public async Task<ICollection<Comment>> GetCommentsOfPicture(string pictureId)
+        {
+            var picture = await GetPicture(pictureId);
+            if (picture == null)
+            {
+                return new List<Comment>();
+            }
+
+            return await _dataContext.Comments
+                .AsNoTracking()
+                .Where(x => x.PictureId == pictureId)
+                .ToListAsync();
+        }
+
+        public async Task<int> GetScoreOfPicture(string pictureId)
+        {
+            var any = await DoesPictureExist(pictureId);
+            if (!any)
+            {
+                return 0;
+            }
+
+            return await _dataContext.Scores
+                .AsNoTracking()
+                .Where(x => x.PictureId == pictureId)
+                .SumAsync(x => x.Amount);
+        }
+
+        public async Task<ICollection<Tag>> GetTagsOfPicture(string pictureId)
+        {
+            var any = await DoesPictureExist(pictureId);
+            if (!any)
+            {
+                return new List<Tag>();
+            }
+
+            var pictureTags = await _dataContext.PictureTags
+                .AsNoTracking()
+                .Where(x => x.PictureId == pictureId)
+                .ToListAsync();
+
+            var tags = new List<Tag>();
+            foreach (var pictureTag in pictureTags)
+            {
+                var tag = await _dataContext.Tags
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.Id == pictureTag.TagId);
+
+                if (tag != null)
+                {
+                    tags.Add(tag);
+                }
+            }
+
+            return tags;
+        }
+
+        public async Task<ICollection<Gallery>> GetGalleriesThatContainPicture(string pictureId)
+        {
+            var any = await DoesPictureExist(pictureId);
+            if (!any)
+            {
+                return new List<Gallery>();
+            }
+
+            var pictureGalleries = await _dataContext.PictureGalleries
+                .AsNoTracking()
+                .Where(x => x.PictureId == pictureId)
+                .ToListAsync();
+
+            var galleries = new List<Gallery>();
+            foreach (var pictureGallery in pictureGalleries)
+            {
+                var gallery = await _dataContext.Galleries
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.Id == pictureGallery.GalleryId);
+
+                if (gallery != null)
+                {
+                    galleries.Add(gallery);
+                }
+            }
+
+            return galleries;
         }
 
         public async Task<bool> DoesPictureExist(string pictureId)
@@ -105,6 +196,20 @@ namespace ImageGalleries.WebApi.Repositories.Pictures
 
             _dataContext.Pictures.Remove(picture);
 
+            return await Save();
+        }
+
+        public async Task<bool> UpdatePictureDescription(string pictureId, string description)
+        {
+            var picture = await GetPicture(pictureId);
+            if (picture == null)
+            {
+                return false;
+            }
+
+            picture.Description = description;
+            _dataContext.Pictures.Update(picture);
+            
             return await Save();
         }
 
