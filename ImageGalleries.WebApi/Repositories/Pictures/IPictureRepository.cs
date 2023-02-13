@@ -15,7 +15,6 @@ namespace ImageGalleries.WebApi.Repositories.Pictures
         Task<bool> AddPicture(IFormFile? formFile, string userId, string description = "");
         Task<bool> RemovePicture(string pictureId);
         Task<bool> UpdatePictureDescription(string pictureId, string description);
-        Task<bool> UpdateProfilePicture(IFormFile? formFile, User user);
         Task<bool> Save();
     }
 }

@@ -2,7 +2,6 @@
 using ImageGalleries.WebApi.Models;
 using ImageGalleries.WebApi.Services.RandomGenerators;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.Metrics;
 
 namespace ImageGalleries.WebApi.Repositories.Galleries
 {
@@ -97,8 +96,19 @@ namespace ImageGalleries.WebApi.Repositories.Galleries
             return await Save();
         }
 
-        public async Task<bool> AddPictureToGallery(string galleryId, string pictureId)
+        public async Task<bool> AddPictureToGallery(string userId, string galleryId, string pictureId)
         {
+            var gallery = await GetGallery(galleryId);
+            if (gallery == null)
+            {
+                return false;
+            }
+
+            if (gallery.UserId != userId)
+            {
+                return false;
+            }
+
             var pictureGallery = new PictureGallery()
             {
                 PictureId = pictureId,
@@ -110,8 +120,19 @@ namespace ImageGalleries.WebApi.Repositories.Galleries
             return await Save();
         }
 
-        public async Task<bool> RemovePictureFromGallery(string galleryId, string pictureId)
+        public async Task<bool> RemovePictureFromGallery(string userId, string galleryId, string pictureId)
         {
+            var gallery = await GetGallery(galleryId);
+            if (gallery == null)
+            {
+                return false;
+            }
+
+            if (gallery.UserId != userId)
+            {
+                return false;
+            }
+
             var pictureGallery = new PictureGallery()
             {
                 PictureId = pictureId,
@@ -123,10 +144,15 @@ namespace ImageGalleries.WebApi.Repositories.Galleries
             return await Save();
         }
 
-        public async Task<bool> UpdateGalleryNameAndDescription(string galleryId, string newName, string newDescription)
+        public async Task<bool> UpdateGalleryNameAndDescription(string userId, string galleryId, string newName, string newDescription)
         {
             var gallery = await GetGallery(galleryId);
             if (gallery == null)
+            {
+                return false;
+            }
+
+            if (gallery.UserId != userId)
             {
                 return false;
             }
@@ -139,10 +165,15 @@ namespace ImageGalleries.WebApi.Repositories.Galleries
             return await Save();
         }
 
-        public async Task<bool> RemoveGallery(string galleryId)
+        public async Task<bool> RemoveGallery(string userId, string galleryId)
         {
             var gallery = await GetGallery(galleryId);
             if (gallery == null)
+            {
+                return false;
+            }
+
+            if (gallery.UserId != userId)
             {
                 return false;
             }
