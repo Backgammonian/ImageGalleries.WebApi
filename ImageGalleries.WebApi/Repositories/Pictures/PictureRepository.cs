@@ -148,13 +148,13 @@ namespace ImageGalleries.WebApi.Repositories.Pictures
                 return false;
             }
 
-            var photoResult = await _photoService.AddPhotoAsync(formFile);
+            var photoResult = await _photoService.AddPhoto(formFile);
             if (photoResult.Error != null)
             {
                 return false;
             }
 
-            var previewPhotoResult = await _photoService.AddPreviewPhotoAsync(formFile);
+            var previewPhotoResult = await _photoService.AddPreviewPhoto(formFile);
             if (previewPhotoResult.Error != null)
             {
                 return false;
@@ -182,13 +182,13 @@ namespace ImageGalleries.WebApi.Repositories.Pictures
                 return false;
             }
 
-            var pictureDeletionResult = await _photoService.DeletePhotoAsync(picture.Url);
+            var pictureDeletionResult = await _photoService.DeletePhoto(picture.Url);
             if (pictureDeletionResult.Error != null)
             {
                 return false;
             }
 
-            var previewDeletionResult = await _photoService.DeletePhotoAsync(picture.PreviewUrl);
+            var previewDeletionResult = await _photoService.DeletePhoto(picture.PreviewUrl);
             if (previewDeletionResult.Error != null)
             {
                 return false;
@@ -210,25 +210,6 @@ namespace ImageGalleries.WebApi.Repositories.Pictures
             picture.Description = description;
             _dataContext.Pictures.Update(picture);
             
-            return await Save();
-        }
-
-        public async Task<bool> UpdateProfilePicture(IFormFile? formFile, User user)
-        {
-            if (formFile == null)
-            {
-                return false;
-            }
-
-            var photoResult = await _photoService.AddPreviewPhotoAsync(formFile);
-            if (photoResult.Error != null)
-            {
-                return false;
-            }
-
-            user.ProfilePictureUrl = photoResult.Url.ToString();
-            _dataContext.Users.Update(user);
-
             return await Save();
         }
 

@@ -14,7 +14,7 @@ using System.Security.Claims;
 namespace ImageGalleries.WebApi.Controllers
 {
     [ApiController]
-    [Route("account")]
+    [Route("api/account")]
     public class AccountController : Controller
     {
         private readonly UserManager<User> _userManager;
