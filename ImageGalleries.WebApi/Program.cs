@@ -161,7 +161,8 @@ namespace ImageGalleries.WebApi
             Console.WriteLine("(SeedData) Seeding the database");
 
             var seeder = new Seeder(app);
-            await seeder.Seed();
+            var accounts = await seeder.SeedUsers();
+            await seeder.SeedData(accounts.Item1, accounts.Item2);
         }
     }
 }
