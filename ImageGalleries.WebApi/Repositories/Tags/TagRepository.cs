@@ -8,13 +8,10 @@ namespace ImageGalleries.WebApi.Repositories.Tags
     public class TagRepository : ITagRepository
     {
         private readonly DataContext _dataContext;
-        private readonly IRandomGenerator _randomGenerator;
 
-        public TagRepository(DataContext dataContext,
-            IRandomGenerator randomGenerator)
+        public TagRepository(DataContext dataContext)
         {
             _dataContext = dataContext;
-            _randomGenerator = randomGenerator;
         }
 
         public async Task<ICollection<Tag>> GetTags()
@@ -24,23 +21,23 @@ namespace ImageGalleries.WebApi.Repositories.Tags
                 .ToListAsync();
         }
 
-        public async Task<bool> DoesTagExist(string tagId)
+        public async Task<bool> DoesTagExist(string tagName)
         {
             return await _dataContext.Tags
                 .AsNoTracking()
-                .AnyAsync(x => x.Id == tagId);
+                .AnyAsync(x => x.Name == tagName);
         }
 
-        public async Task<Tag?> GetTag(string tagId)
+        public async Task<Tag?> GetTag(string tagName)
         {
             return await _dataContext.Tags
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == tagId);
+                .FirstOrDefaultAsync(x => x.Name == tagName);
         }
 
-        public async Task<ICollection<Picture>> GetPicturesByTag(string tagId)
+        public async Task<ICollection<Picture>> GetPicturesByTag(string tagName)
         {
-            var any = await DoesTagExist(tagId);
+            var any = await DoesTagExist(tagName);
             if (!any)
             {
                 return new List<Picture>();
@@ -48,7 +45,7 @@ namespace ImageGalleries.WebApi.Repositories.Tags
 
             var picturesByTag = await _dataContext.PictureTags
                 .AsNoTracking()
-                .Where(x => x.TagId == tagId)
+                .Where(x => x.TagName == tagName)
                 .ToListAsync();
 
             var pictures = new List<Picture>();
@@ -71,7 +68,6 @@ namespace ImageGalleries.WebApi.Repositories.Tags
         {
             var tag = new Tag()
             {
-                Id = _randomGenerator.GetRandomId(),
                 Name = name,
                 Description = description,
                 CreationDate = DateTime.UtcNow
@@ -82,12 +78,12 @@ namespace ImageGalleries.WebApi.Repositories.Tags
             return await Save();
         }
 
-        public async Task<bool> AddTagToPicture(string tagId, string pictureId)
+        public async Task<bool> AddTagToPicture(Tag tag, Picture picture)
         {
             var pictureTag = new PictureTag()
             {
-                PictureId = pictureId,
-                TagId = tagId
+                PictureId = picture.Id,
+                TagName = tag.Name
             };
 
             await _dataContext.PictureTags.AddAsync(pictureTag);
@@ -95,12 +91,12 @@ namespace ImageGalleries.WebApi.Repositories.Tags
             return await Save();
         }
 
-        public async Task<bool> RemoveTagFromPicture(string tagId, string pictureId)
+        public async Task<bool> RemoveTagFromPicture(Tag tag, Picture picture)
         {
             var pictureTag = new PictureTag()
             {
-                PictureId = pictureId,
-                TagId = tagId
+                PictureId = picture.Id,
+                TagName = tag.Name
             };
 
             _dataContext.PictureTags.Remove(pictureTag);
@@ -108,14 +104,8 @@ namespace ImageGalleries.WebApi.Repositories.Tags
             return await Save();
         }
 
-        public async Task<bool> UpdateTagNameAndDescription(string tagId, string newName, string newDescription)
+        public async Task<bool> UpdateTag(Tag tag, string newName, string newDescription)
         {
-            var tag = await GetTag(tagId);
-            if (tag == null)
-            {
-                return false;
-            }
-
             tag.Name = newName;
             tag.Description = newDescription;
 
@@ -124,14 +114,8 @@ namespace ImageGalleries.WebApi.Repositories.Tags
             return await Save();
         }
 
-        public async Task<bool> RemoveTag(string tagId)
+        public async Task<bool> RemoveTag(Tag tag)
         {
-            var tag = await GetTag(tagId);
-            if (tag == null)
-            {
-                return false;
-            }
-
             _dataContext.Tags.Remove(tag);
 
             return await Save();

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ImageGalleries.WebApi.Data;
 using ImageGalleries.WebApi.DTOs;
 using ImageGalleries.WebApi.Repositories.Galleries;
 using ImageGalleries.WebApi.Repositories.Users;
@@ -73,7 +74,10 @@ namespace ImageGalleries.WebApi.Controllers
                 return Unauthorized();
             }
 
-            var created = await _galleryRepository.CreateGallery(userId, createGalleryRequest.GalleryName, createGalleryRequest.GalleryDescription);
+            var created = await _galleryRepository.CreateGallery(userId,
+                createGalleryRequest.GalleryName,
+                createGalleryRequest.GalleryDescription);
+
             if (created)
             {
                 return Ok("Gallery created successfully");
@@ -93,13 +97,24 @@ namespace ImageGalleries.WebApi.Controllers
                 return Unauthorized();
             }
 
-            var added = await _galleryRepository.AddPictureToGallery(userId, galleryId, pictureId);
+            var gallery = await _galleryRepository.GetGallery(galleryId);
+            if (gallery == null)
+            {
+                return BadRequest("Gallery doesn't exist");
+            }
+
+            if (gallery.UserId != userId)
+            {
+                return Unauthorized("You can't add pictures to this gallery");
+            }
+
+            var added = await _galleryRepository.AddPictureToGallery(gallery, pictureId);
             if (added)
             {
                 return Ok("Picture added to gallery successfully");
             }
 
-            return BadRequest("Can't add picture to gallery");
+            return BadRequest("Unknown problem occured while adding picture to the gallery");
         }
 
         [Authorize]
@@ -113,13 +128,24 @@ namespace ImageGalleries.WebApi.Controllers
                 return Unauthorized();
             }
 
-            var removed = await _galleryRepository.RemovePictureFromGallery(userId, galleryId, pictureId);
+            var gallery = await _galleryRepository.GetGallery(galleryId);
+            if (gallery == null)
+            {
+                return BadRequest("Gallery doesn't exist");
+            }
+
+            if (gallery.UserId != userId)
+            {
+                return Unauthorized("You can't remove pictures from this gallery");
+            }
+
+            var removed = await _galleryRepository.RemovePictureFromGallery(gallery, pictureId);
             if (removed)
             {
                 return Ok("Picture removed from gallery successfully");
             }
 
-            return BadRequest("Can't remove picture from gallery");
+            return BadRequest("Unknown problem occured while removing picture from the gallery");
         }
 
         [Authorize]
@@ -133,13 +159,25 @@ namespace ImageGalleries.WebApi.Controllers
                 return Unauthorized();
             }
 
-            var updated = await _galleryRepository.UpdateGalleryNameAndDescription(userId, galleryId, newName, newDescription);
+            var gallery = await _galleryRepository.GetGallery(galleryId);
+            if (gallery == null)
+            {
+                return BadRequest("Gallery doesn't exist");
+            }
+
+            if (gallery.UserId != userId &&
+                HttpContext.User.FindFirstValue(ClaimTypes.Role) != Roles.AdminRole)
+            {
+                return Unauthorized("You can't update this gallery");
+            }
+
+            var updated = await _galleryRepository.UpdateGalleryNameAndDescription(gallery, newName, newDescription);
             if (updated)
             {
                 return Ok("Gallery updated successfully");
             }
 
-            return BadRequest("Can't update gallery");
+            return BadRequest("Unknown problem occured while updating the gallery");
         }
 
         [Authorize]
@@ -153,13 +191,25 @@ namespace ImageGalleries.WebApi.Controllers
                 return Unauthorized();
             }
 
-            var removed = await _galleryRepository.RemoveGallery(userId, galleryId);
+            var gallery = await _galleryRepository.GetGallery(galleryId);
+            if (gallery == null)
+            {
+                return BadRequest("Gallery doesn't exist");
+            }
+
+            if (gallery.UserId != userId &&
+                HttpContext.User.FindFirstValue(ClaimTypes.Role) != Roles.AdminRole)
+            {
+                return Unauthorized("You can't remove this gallery");
+            }
+
+            var removed = await _galleryRepository.RemoveGallery(gallery);
             if (removed)
             {
                 return Ok("Gallery removed successfully");
             }
 
-            return BadRequest("Can't remove gallery");
+            return BadRequest("Unknown problem occured while removing the gallery");
         }
     }
 }

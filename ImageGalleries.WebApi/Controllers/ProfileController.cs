@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ImageGalleries.WebApi.Data;
 using ImageGalleries.WebApi.DTOs;
 using ImageGalleries.WebApi.Repositories.Users;
 using ImageGalleries.WebApi.Requests;
@@ -127,7 +128,10 @@ namespace ImageGalleries.WebApi.Controllers
                 return Unauthorized();
             }
 
-            var added = await _userRepository.AddCommentToPicture(userId, addCommentRequest.PictureId, addCommentRequest.Content);
+            var added = await _userRepository.AddCommentToPicture(userId,
+                addCommentRequest.PictureId,
+                addCommentRequest.Content);
+
             if (added)
             {
                 return Ok("Comment added successfully");
@@ -147,13 +151,25 @@ namespace ImageGalleries.WebApi.Controllers
                 return Unauthorized();
             }
 
-            var removed = await _userRepository.RemoveComment(userId, commentId);
+            var comment = await _userRepository.GetComment(commentId);
+            if (comment == null) 
+            {
+                return BadRequest("Comment doesn't exist");
+            }
+
+            if (comment.UserId != userId &&
+                HttpContext.User.FindFirstValue(ClaimTypes.Role) != Roles.AdminRole) 
+            {
+                return Unauthorized("You can't remove this comment");
+            }
+
+            var removed = await _userRepository.RemoveComment(comment);
             if (removed)
             {
                 return Ok("Comment removed successfully");
             }
 
-            return BadRequest("Can't remove the comment");
+            return BadRequest("Unknown problem occured while removing the comment");
         }
 
         [Authorize]
@@ -167,7 +183,8 @@ namespace ImageGalleries.WebApi.Controllers
                 return Unauthorized();
             }
 
-            var added = await _userRepository.AddScoreToPicture(userId, addScoreRequest.PictureId,
+            var added = await _userRepository.AddScoreToPicture(userId,
+                addScoreRequest.PictureId,
                 addScoreRequest.IsUpvote ? 1 : -1);
 
             if (added)
@@ -189,13 +206,24 @@ namespace ImageGalleries.WebApi.Controllers
                 return Unauthorized();
             }
 
-            var removed = await _userRepository.RemoveScore(userId, scoreId);
+            var score = await _userRepository.GetScore(scoreId);
+            if (score == null)
+            {
+                return BadRequest("Score doesn't exist");
+            }
+
+            if (score.UserId != userId)
+            {
+                return Unauthorized("You can't remove this score");
+            }
+
+            var removed = await _userRepository.RemoveScore(score);
             if (removed)
             {
                 return Ok("Score removed successfully");
             }
 
-            return BadRequest("Can't remove the score");
+            return BadRequest("Unknown problem occured while removing the score");
         }
     }
 }

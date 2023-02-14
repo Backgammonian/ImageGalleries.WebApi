@@ -5,14 +5,14 @@ namespace ImageGalleries.WebApi.Repositories.Tags
     public interface ITagRepository
     {
         Task<ICollection<Tag>> GetTags();
-        Task<bool> DoesTagExist(string tagId);
-        Task<Tag?> GetTag(string tagId);
-        Task<ICollection<Picture>> GetPicturesByTag(string tagId);
+        Task<bool> DoesTagExist(string tagName);
+        Task<Tag?> GetTag(string tagName);
+        Task<ICollection<Picture>> GetPicturesByTag(string tagName);
         Task<bool> CreateTag(string name, string description = "");
-        Task<bool> AddTagToPicture(string tagId, string pictureId);
-        Task<bool> RemoveTagFromPicture(string tagId, string pictureId);
-        Task<bool> UpdateTagNameAndDescription(string tagId, string newName, string newDescription);
-        Task<bool> RemoveTag(string tagId);
+        Task<bool> AddTagToPicture(Tag tag, Picture picture);
+        Task<bool> RemoveTagFromPicture(Tag tag, Picture picture);
+        Task<bool> UpdateTag(Tag tag, string newName, string newDescription);
+        Task<bool> RemoveTag(Tag tag);
         Task<bool> Save();
     }
 }

@@ -10,10 +10,10 @@ namespace ImageGalleries.WebApi.Repositories.Galleries
         Task<User?> GetGalleryOwner(string galleryId);
         Task<ICollection<Picture>> GetPicturesFromGallery(string galleryId);
         Task<bool> CreateGallery(string userId, string galleryName, string galleryDescription = "");
-        Task<bool> AddPictureToGallery(string userId, string galleryId, string pictureId);
-        Task<bool> RemovePictureFromGallery(string userId, string galleryId, string pictureId);
-        Task<bool> UpdateGalleryNameAndDescription(string userId, string galleryId, string newName, string newDescription);
-        Task<bool> RemoveGallery(string userId, string galleryId);
+        Task<bool> AddPictureToGallery(Gallery gallery, string pictureId);
+        Task<bool> RemovePictureFromGallery(Gallery gallery, string pictureId);
+        Task<bool> UpdateGalleryNameAndDescription(Gallery gallery, string newName, string newDescription);
+        Task<bool> RemoveGallery(Gallery gallery);
         Task<bool> Save();
     }
 }

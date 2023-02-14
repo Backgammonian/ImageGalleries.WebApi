@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ImageGalleries.WebApi.Data;
 using ImageGalleries.WebApi.DTOs;
 using ImageGalleries.WebApi.Repositories.Pictures;
 using ImageGalleries.WebApi.Repositories.Users;
@@ -107,7 +108,10 @@ namespace ImageGalleries.WebApi.Controllers
                 return BadRequest("No picture!");
             }
 
-            var added = await _pictureRepository.AddPicture(picture, userId, addPictureRequest.PictureDescription);
+            var added = await _pictureRepository.AddPicture(picture,
+                userId,
+                addPictureRequest.PictureDescription);
+
             if (added)
             {
                 return Ok("Picture added successfully");
@@ -133,18 +137,19 @@ namespace ImageGalleries.WebApi.Controllers
                 return BadRequest("Picture doesn't exist");
             }
 
-            if (picture.UserId != userId)
+            if (picture.UserId != userId &&
+                HttpContext.User.FindFirstValue(ClaimTypes.Role) != Roles.AdminRole)
             {
-                return Unauthorized("No access for this operation");
+                return Unauthorized("You can't remove this picture");
             }
 
-            var removed = await _pictureRepository.RemovePicture(pictureId);
+            var removed = await _pictureRepository.RemovePicture(picture);
             if (removed)
             {
                 return Ok("Picture removed successfully");
             }
 
-            return BadRequest("Can't remove the picture");
+            return BadRequest("Unknown problem occured while removing the picture");
         }
 
         [Authorize]
@@ -164,18 +169,19 @@ namespace ImageGalleries.WebApi.Controllers
                 return BadRequest("Picture doesn't exist");
             }
 
-            if (picture.UserId != userId)
+            if (picture.UserId != userId &&
+                HttpContext.User.FindFirstValue(ClaimTypes.Role) != Roles.AdminRole)
             {
-                return Unauthorized("No access for this operation");
+                return Unauthorized("You can't update this picture's description");
             }
 
-            var updated = await _pictureRepository.UpdatePictureDescription(pictureId, description);
+            var updated = await _pictureRepository.UpdatePictureDescription(picture, description);
             if (updated)
             {
                 return Ok("Picture's description updated successfully");
             }
 
-            return BadRequest("Can't update the picture's description");
+            return BadRequest("Unknown problem occured while updating the picture's description");
         }
     }
 }
