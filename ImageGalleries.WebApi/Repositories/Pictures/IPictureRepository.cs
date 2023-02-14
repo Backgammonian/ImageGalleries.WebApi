@@ -12,9 +12,9 @@ namespace ImageGalleries.WebApi.Repositories.Pictures
         Task<ICollection<Gallery>> GetGalleriesThatContainPicture(string pictureId);
         Task<bool> DoesPictureExist(string pictureId);
         Task<Picture?> GetPicture(string pictureId);
-        Task<bool> AddPicture(IFormFile? formFile, string userId, string description = "");
-        Task<bool> RemovePicture(string pictureId);
-        Task<bool> UpdatePictureDescription(string pictureId, string description);
+        Task<bool> AddPicture(IFormFile formFile, string userId, string description = "");
+        Task<bool> RemovePicture(Picture picture);
+        Task<bool> UpdatePictureDescription(Picture picture, string description);
         Task<bool> Save();
     }
 }

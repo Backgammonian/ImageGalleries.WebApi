@@ -96,23 +96,12 @@ namespace ImageGalleries.WebApi.Repositories.Galleries
             return await Save();
         }
 
-        public async Task<bool> AddPictureToGallery(string userId, string galleryId, string pictureId)
+        public async Task<bool> AddPictureToGallery(Gallery gallery, string pictureId)
         {
-            var gallery = await GetGallery(galleryId);
-            if (gallery == null)
-            {
-                return false;
-            }
-
-            if (gallery.UserId != userId)
-            {
-                return false;
-            }
-
             var pictureGallery = new PictureGallery()
             {
                 PictureId = pictureId,
-                GalleryId = galleryId
+                GalleryId = gallery.Id
             };
 
             await _dataContext.PictureGalleries.AddAsync(pictureGallery);
@@ -120,23 +109,12 @@ namespace ImageGalleries.WebApi.Repositories.Galleries
             return await Save();
         }
 
-        public async Task<bool> RemovePictureFromGallery(string userId, string galleryId, string pictureId)
+        public async Task<bool> RemovePictureFromGallery(Gallery gallery, string pictureId)
         {
-            var gallery = await GetGallery(galleryId);
-            if (gallery == null)
-            {
-                return false;
-            }
-
-            if (gallery.UserId != userId)
-            {
-                return false;
-            }
-
             var pictureGallery = new PictureGallery()
             {
                 PictureId = pictureId,
-                GalleryId = galleryId
+                GalleryId = gallery.Id
             };
 
             _dataContext.PictureGalleries.Remove(pictureGallery);
@@ -144,19 +122,8 @@ namespace ImageGalleries.WebApi.Repositories.Galleries
             return await Save();
         }
 
-        public async Task<bool> UpdateGalleryNameAndDescription(string userId, string galleryId, string newName, string newDescription)
+        public async Task<bool> UpdateGalleryNameAndDescription(Gallery gallery, string newName, string newDescription)
         {
-            var gallery = await GetGallery(galleryId);
-            if (gallery == null)
-            {
-                return false;
-            }
-
-            if (gallery.UserId != userId)
-            {
-                return false;
-            }
-
             gallery.Name = newName;
             gallery.Description = newDescription;
             
@@ -165,19 +132,8 @@ namespace ImageGalleries.WebApi.Repositories.Galleries
             return await Save();
         }
 
-        public async Task<bool> RemoveGallery(string userId, string galleryId)
+        public async Task<bool> RemoveGallery(Gallery gallery)
         {
-            var gallery = await GetGallery(galleryId);
-            if (gallery == null)
-            {
-                return false;
-            }
-
-            if (gallery.UserId != userId)
-            {
-                return false;
-            }
-
             _dataContext.Galleries.Remove(gallery);
 
             return await Save();

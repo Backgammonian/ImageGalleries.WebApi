@@ -69,13 +69,8 @@ namespace ImageGalleries.WebApi.Repositories.Users
             return await Save();
         }
 
-        public async Task<bool> UpdateProfilePicture(User user, IFormFile? formFile)
+        public async Task<bool> UpdateProfilePicture(User user, IFormFile formFile)
         {
-            if (formFile == null)
-            {
-                return false;
-            }
-
             var photoResult = await _photoService.AddPreviewPhoto(formFile);
             if (photoResult.Error != null)
             {
@@ -104,24 +99,18 @@ namespace ImageGalleries.WebApi.Repositories.Users
             return await Save();
         }
 
-        public async Task<bool> RemoveComment(string userId, string commentId)
+        public async Task<bool> RemoveComment(Comment comment)
         {
-            var comment = await _dataContext.Comments.
-                FirstOrDefaultAsync(x => x.Id == commentId);
-
-            if (comment == null)
-            {
-                return false;
-            }
-
-            if (comment.UserId != userId)
-            {
-                return false;
-            }
-
             _dataContext.Comments.Remove(comment);
 
             return await Save();
+        }
+
+        public async Task<Comment?> GetComment(string commentId)
+        {
+            return await _dataContext.Comments
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == commentId);
         }
 
         public async Task<bool> AddScoreToPicture(string userId, string pictureId, int amount)
@@ -140,24 +129,18 @@ namespace ImageGalleries.WebApi.Repositories.Users
             return await Save();
         }
 
-        public async Task<bool> RemoveScore(string userId, string scoreId)
+        public async Task<bool> RemoveScore(Score score)
         {
-            var score = await _dataContext.Scores.
-                FirstOrDefaultAsync(x => x.Id == scoreId);
-
-            if (score == null)
-            {
-                return false;
-            }
-
-            if (score.UserId != userId)
-            {
-                return false;
-            }
-
             _dataContext.Scores.Remove(score);
 
             return await Save();
+        }
+
+        public async Task<Score?> GetScore(string scoreId)
+        {
+            return await _dataContext.Scores
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == scoreId);
         }
 
         public async Task<bool> Save()

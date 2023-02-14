@@ -141,13 +141,8 @@ namespace ImageGalleries.WebApi.Repositories.Pictures
                 .AnyAsync(x => x.Id == pictureId);
         }
 
-        public async Task<bool> AddPicture(IFormFile? formFile, string userId, string description = "")
+        public async Task<bool> AddPicture(IFormFile formFile, string userId, string description = "")
         {
-            if (formFile == null)
-            {
-                return false;
-            }
-
             var photoResult = await _photoService.AddPhoto(formFile);
             if (photoResult.Error != null)
             {
@@ -174,14 +169,8 @@ namespace ImageGalleries.WebApi.Repositories.Pictures
             return await Save();
         }
 
-        public async Task<bool> RemovePicture(string pictureId)
+        public async Task<bool> RemovePicture(Picture picture)
         {
-            var picture = await GetPicture(pictureId);
-            if (picture == null)
-            {
-                return false;
-            }
-
             var pictureDeletionResult = await _photoService.DeletePhoto(picture.Url);
             if (pictureDeletionResult.Error != null)
             {
@@ -199,14 +188,8 @@ namespace ImageGalleries.WebApi.Repositories.Pictures
             return await Save();
         }
 
-        public async Task<bool> UpdatePictureDescription(string pictureId, string description)
+        public async Task<bool> UpdatePictureDescription(Picture picture, string description)
         {
-            var picture = await GetPicture(pictureId);
-            if (picture == null)
-            {
-                return false;
-            }
-
             picture.Description = description;
             _dataContext.Pictures.Update(picture);
             

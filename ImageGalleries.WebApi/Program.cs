@@ -134,7 +134,7 @@ namespace ImageGalleries.WebApi
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
             if (args.Length > 0 &&
-                args[0].ToLower() == "seeddata")
+                args[0].ToLower() == "SeedData".ToLower())
             {
                 await SeedData(app);
             }
