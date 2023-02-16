@@ -150,7 +150,9 @@ namespace ImageGalleries.WebApi.Controllers
 
         [Authorize]
         [HttpPut("update")]
-        public async Task<IActionResult> UpdateGalleryNameAndDescription([FromBody] string galleryId, string newName, string newDescription)
+        public async Task<IActionResult> UpdateGalleryNameAndDescription([FromBody] string galleryId,
+            string newName,
+            string newDescription)
         {
             var userId = HttpContext.User.FindFirstValue("UserId") ?? string.Empty;
             var user = await _userRepository.GetUser(userId);

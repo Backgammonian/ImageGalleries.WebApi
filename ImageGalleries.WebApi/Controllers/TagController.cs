@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using ImageGalleries.WebApi.Data;
 using ImageGalleries.WebApi.DTOs;
-using ImageGalleries.WebApi.Models;
 using ImageGalleries.WebApi.Repositories.Pictures;
 using ImageGalleries.WebApi.Repositories.Tags;
 using ImageGalleries.WebApi.Repositories.Users;
@@ -116,7 +115,7 @@ namespace ImageGalleries.WebApi.Controllers
         }
 
         [Authorize]
-        [HttpPost("add-tag")]
+        [HttpPost("add-tag-to-picture")]
         public async Task<IActionResult> AddTagToPicture([FromBody] string tagName, string pictureId)
         {
             var userId = HttpContext.User.FindFirstValue("UserId") ?? string.Empty;
@@ -154,7 +153,7 @@ namespace ImageGalleries.WebApi.Controllers
         }
 
         [Authorize]
-        [HttpDelete("remove-tag")]
+        [HttpDelete("remove-tag-from-picture")]
         public async Task<IActionResult> RemoveTagFromPicture([FromBody] string tagName, string pictureId)
         {
             var userId = HttpContext.User.FindFirstValue("UserId") ?? string.Empty;

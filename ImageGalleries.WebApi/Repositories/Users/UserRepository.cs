@@ -117,7 +117,6 @@ namespace ImageGalleries.WebApi.Repositories.Users
         {
             var score = new Score()
             {
-                Id = _randomGenerator.GetRandomId(),
                 PictureId = pictureId,
                 UserId = userId,
                 Amount = amount,
@@ -129,18 +128,33 @@ namespace ImageGalleries.WebApi.Repositories.Users
             return await Save();
         }
 
-        public async Task<bool> RemoveScore(Score score)
+        public async Task<bool> RemoveScoreFromPicture(Score score)
         {
             _dataContext.Scores.Remove(score);
 
             return await Save();
         }
 
-        public async Task<Score?> GetScore(string scoreId)
+        public async Task<bool> DoesScoreExist(string userId, string pictureId)
         {
             return await _dataContext.Scores
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == scoreId);
+                .AnyAsync(x => x.UserId == userId &&
+                    x.PictureId == pictureId);
+        }
+
+        public async Task<Score?> GetScore(string userId, string pictureId)
+        {
+            var doesScoreExist = await DoesScoreExist(userId, pictureId);
+            if (doesScoreExist)
+            {
+                return await _dataContext.Scores
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.UserId == userId &&
+                        x.PictureId == pictureId);
+            }
+
+            return null;
         }
 
         public async Task<bool> Save()

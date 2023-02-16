@@ -10,13 +10,13 @@ using System.Security.Claims;
 namespace ImageGalleries.WebApi.Controllers
 {
     [ApiController]
-    [Route("api/profile")]
-    public class ProfileController : Controller
+    [Route("api/user")]
+    public class UserController : Controller
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public ProfileController(IUserRepository userRepository,
+        public UserController(IUserRepository userRepository,
             IMapper mapper)
         {
             _userRepository = userRepository;
@@ -183,6 +183,12 @@ namespace ImageGalleries.WebApi.Controllers
                 return Unauthorized();
             }
 
+            var score = await _userRepository.GetScore(userId, addScoreRequest.PictureId);
+            if (score != null)
+            {
+                await _userRepository.RemoveScoreFromPicture(score);
+            }
+
             var added = await _userRepository.AddScoreToPicture(userId,
                 addScoreRequest.PictureId,
                 addScoreRequest.IsUpvote ? 1 : -1);
@@ -192,38 +198,7 @@ namespace ImageGalleries.WebApi.Controllers
                 return Ok("Score added successfully");
             }
 
-            return BadRequest("Can't add the score");
-        }
-
-        [Authorize]
-        [HttpDelete("remove-score")]
-        public async Task<IActionResult> RemoveScore([FromBody] string scoreId)
-        {
-            var userId = HttpContext.User.FindFirstValue("UserId") ?? string.Empty;
-            var user = await _userRepository.GetUser(userId);
-            if (user == null)
-            {
-                return Unauthorized();
-            }
-
-            var score = await _userRepository.GetScore(scoreId);
-            if (score == null)
-            {
-                return BadRequest("Score doesn't exist");
-            }
-
-            if (score.UserId != userId)
-            {
-                return Unauthorized("You can't remove this score");
-            }
-
-            var removed = await _userRepository.RemoveScore(score);
-            if (removed)
-            {
-                return Ok("Score removed successfully");
-            }
-
-            return BadRequest("Unknown problem occured while removing the score");
+            return BadRequest("Unknown problem occured while adding the score");
         }
     }
 }
