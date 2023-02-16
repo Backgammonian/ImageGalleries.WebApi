@@ -20,6 +20,11 @@ namespace ImageGalleries.WebApi.Data
             _dataContext = _serviceScope.ServiceProvider.GetRequiredService<DataContext>();
         }
 
+        public Seeder(DataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
         public async Task<(User, User[])> SeedUsers()
         {
             if (!await _roleManager.RoleExistsAsync(Roles.AdminRole))
@@ -204,7 +209,6 @@ namespace ImageGalleries.WebApi.Data
             { 
                 new Score()
                 {
-                    Id = "0",
                     Amount = 1,
                     PictureId = pictures[0].Id,
                     UserId = users[0].Id,
@@ -213,7 +217,6 @@ namespace ImageGalleries.WebApi.Data
 
                 new Score()
                 {
-                    Id = "1",
                     Amount = 1,
                     PictureId = pictures[0].Id,
                     UserId = users[1].Id,
@@ -222,7 +225,6 @@ namespace ImageGalleries.WebApi.Data
 
                 new Score()
                 {
-                    Id = "2",
                     Amount = -1,
                     PictureId = pictures[1].Id,
                     UserId = users[0].Id,
@@ -231,7 +233,6 @@ namespace ImageGalleries.WebApi.Data
 
                 new Score()
                 {
-                    Id = "3",
                     Amount = 1,
                     PictureId = pictures[1].Id,
                     UserId = users[1].Id,
@@ -240,7 +241,6 @@ namespace ImageGalleries.WebApi.Data
 
                 new Score()
                 {
-                    Id = "4",
                     Amount = -1,
                     PictureId = pictures[3].Id,
                     UserId = users[1].Id,

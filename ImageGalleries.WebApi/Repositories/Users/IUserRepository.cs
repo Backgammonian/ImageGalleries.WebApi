@@ -15,8 +15,9 @@ namespace ImageGalleries.WebApi.Repositories.Users
         Task<bool> RemoveComment(Comment comment);
         Task<Comment?> GetComment(string commentId);
         Task<bool> AddScoreToPicture(string userId, string pictureId, int amount);
-        Task<bool> RemoveScore(Score score);
-        Task<Score?> GetScore(string scoreId);
+        Task<bool> RemoveScoreFromPicture(Score score);
+        Task<bool> DoesScoreExist(string userId, string pictureId);
+        Task<Score?> GetScore(string userId, string pictureId);
         Task<bool> Save();
     }
 }
