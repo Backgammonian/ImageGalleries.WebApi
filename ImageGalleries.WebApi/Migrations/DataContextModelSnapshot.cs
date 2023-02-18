@@ -169,9 +169,6 @@ namespace ImageGalleries.WebApi.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
                     b.HasKey("PictureId", "UserId");
 
                     b.HasIndex("UserId");

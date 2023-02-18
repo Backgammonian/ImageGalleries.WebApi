@@ -25,7 +25,50 @@ namespace ImageGalleries.WebApi.Data
             _dataContext = dataContext;
         }
 
-        public async Task<(User, User[])> SeedUsers()
+        public (User, List<User>) GetUsers()
+        {
+            var admin = new User()
+            {
+                Id = "admin",
+                UserName = "Admin",
+                Email = "admin@mail.com",
+                EmailConfirmed = true,
+                RegisterDate = DateTime.UtcNow,
+                ProfilePictureUrl = "admin.jpg"
+
+            };
+
+            var users = new List<User>();
+            var userInfos = new[]
+            {
+                ("white@mail.com", "Mr.White"),
+                ("pink@mail.com", "Mr.Pink")
+            };
+
+            for (int i = 0; i < userInfos.Length; i++)
+            {
+                var userInfo = userInfos[i];
+
+                var email = userInfo.Item1;
+                var nickname = userInfo.Item2;
+
+                var user = new User()
+                {
+                    Id = "user" + (i + 1),
+                    UserName = nickname,
+                    Email = email,
+                    EmailConfirmed = true,
+                    RegisterDate = DateTime.UtcNow,
+                    ProfilePictureUrl = "user.jpg"
+                };
+
+                users.Add(user);
+            }
+
+            return (admin, users);
+        }
+
+        public async Task<(User, List<User>)> SeedRolesAndUsers()
         {
             if (!await _roleManager.RoleExistsAsync(Roles.AdminRole))
             {
@@ -37,61 +80,30 @@ namespace ImageGalleries.WebApi.Data
                 await _roleManager.CreateAsync(new IdentityRole(Roles.UserRole));
             }
 
-            var adminEmail = "admin@mail.com";
-            var admin = await _userManager.FindByEmailAsync(adminEmail);
-            if (admin == null)
+            var password = "12345678";
+            var users = GetUsers();
+            var admin = users.Item1;
+            var simpleUsers = users.Item2;
+
+            if (await _userManager.FindByEmailAsync(admin.Email) == null)
             {
-                var newAdmin = new User()
-                {
-                    Id = "admin",
-                    UserName = "Admin",
-                    Email = adminEmail,
-                    EmailConfirmed = true,
-                    RegisterDate = DateTime.UtcNow
-                };
-
-                await _userManager.CreateAsync(newAdmin, "12345678");
-                await _userManager.AddToRoleAsync(newAdmin, Roles.AdminRole);
-
-                admin = newAdmin;
+                await _userManager.CreateAsync(admin, password);
+                await _userManager.AddToRoleAsync(admin, Roles.AdminRole);
             }
 
-            var users = new List<User>();
-            var userInfos = new[] 
+            for (int i = 0; i < simpleUsers.Count; i++)
             {
-                ("white@mail.com", "Mr.White", "12345678"),
-                ("pink@mail.com", "Mr.Pink", "12345678") 
-            };
-
-            for (int i = 0; i < userInfos.Length; i++)
-            {
-                var userInfo = userInfos[i];
-
-                var email = userInfo.Item1;
-                var nickname = userInfo.Item2;
-                var password = userInfo.Item3;
-
-                var user = await _userManager.FindByEmailAsync(email);
-                if (user == null)
+                if (await _userManager.FindByEmailAsync(simpleUsers[i].Email) == null)
                 {
-                    var newUser = new User()
-                    {
-                        Id = "user" + (i + 1),
-                        UserName = nickname,
-                        Email = email,
-                        EmailConfirmed = true
-                    };
-
-                    await _userManager.CreateAsync(newUser, password);
-                    await _userManager.AddToRoleAsync(newUser, Roles.UserRole);
-                    users.Add(newUser);
+                    await _userManager.CreateAsync(simpleUsers[i], password);
+                    await _userManager.AddToRoleAsync(simpleUsers[i], Roles.UserRole);
                 }
             }
 
-            return (admin, users.ToArray());
+            return (admin, simpleUsers);
         }
 
-        public async Task SeedData(User admin, User[] users)
+        public async Task SeedData(User admin, List<User> users)
         {
             var random = new Random();
 
@@ -107,7 +119,7 @@ namespace ImageGalleries.WebApi.Data
                     PreviewUrl = $"Demo-image-preview-{id}.jpg",
                     UploadTime = DateTime.UtcNow.AddHours(random.Next(-60, 20)),
                     Description = $"Description {id}",
-                    UserId = users[i % users.Length].Id
+                    UserId = users[i % users.Count].Id
                 });
             }
 
@@ -122,7 +134,7 @@ namespace ImageGalleries.WebApi.Data
                     Name = $"Gallery {id}",
                     CreationDate = DateTime.UtcNow.AddHours(random.Next(-60, 20)),
                     Description = $"Gallery description {id}",
-                    UserId = users[i % users.Length].Id
+                    UserId = users[i % users.Count].Id
                 });
             }
 

@@ -48,12 +48,12 @@ namespace ImageGalleries.WebApi.Repositories.Pictures
                 .FirstOrDefaultAsync(x => x.Id == pictureId);
         }
 
-        public async Task<ICollection<Comment>> GetCommentsOfPicture(string pictureId)
+        public async Task<ICollection<Comment>?> GetCommentsOfPicture(string pictureId)
         {
             var picture = await GetPicture(pictureId);
             if (picture == null)
             {
-                return new List<Comment>();
+                return null;
             }
 
             return await _dataContext.Comments
@@ -76,12 +76,12 @@ namespace ImageGalleries.WebApi.Repositories.Pictures
                 .SumAsync(x => x.Amount);
         }
 
-        public async Task<ICollection<Tag>> GetTagsOfPicture(string pictureId)
+        public async Task<ICollection<Tag>?> GetTagsOfPicture(string pictureId)
         {
             var any = await DoesPictureExist(pictureId);
             if (!any)
             {
-                return new List<Tag>();
+                return null;
             }
 
             var pictureTags = await _dataContext.PictureTags
@@ -105,12 +105,12 @@ namespace ImageGalleries.WebApi.Repositories.Pictures
             return tags;
         }
 
-        public async Task<ICollection<Gallery>> GetGalleriesThatContainPicture(string pictureId)
+        public async Task<ICollection<Gallery>?> GetGalleriesThatContainPicture(string pictureId)
         {
             var any = await DoesPictureExist(pictureId);
             if (!any)
             {
-                return new List<Gallery>();
+                return null;
             }
 
             var pictureGalleries = await _dataContext.PictureGalleries

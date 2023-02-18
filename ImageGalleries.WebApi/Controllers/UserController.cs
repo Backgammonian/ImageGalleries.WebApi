@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ImageGalleries.WebApi.Data;
 using ImageGalleries.WebApi.DTOs;
+using ImageGalleries.WebApi.Models;
 using ImageGalleries.WebApi.Repositories.Users;
 using ImageGalleries.WebApi.Requests;
 using Microsoft.AspNetCore.Authorization;
@@ -27,6 +28,11 @@ namespace ImageGalleries.WebApi.Controllers
         public async Task<IActionResult> GetUser(string userId)
         {
             var user = await _userRepository.GetUser(userId);
+            if (user == null)
+            {
+                return BadRequest("No user");
+            }
+
             var userDto = _mapper.Map<UserDto>(user);
 
             return Ok(userDto);
@@ -36,6 +42,11 @@ namespace ImageGalleries.WebApi.Controllers
         public async Task<IActionResult> GetPicturesOfUser(string userId)
         {
             var pictures = await _userRepository.GetPicturesOfUser(userId);
+            if (pictures == null)
+            {
+                return BadRequest("No user");
+            }
+
             var picturesDto = _mapper.Map<ICollection<PictureDto>>(pictures);
 
             return Ok(picturesDto);
@@ -45,6 +56,11 @@ namespace ImageGalleries.WebApi.Controllers
         public async Task<IActionResult> GetGalleriesOfUser(string userId)
         {
             var galleries = await _userRepository.GetGalleriesOfUser(userId);
+            if (galleries == null)
+            {
+                return BadRequest("No user");
+            }
+
             var galleriesDto = _mapper.Map<ICollection<GalleryDto>>(galleries);
 
             return Ok(galleriesDto);
@@ -54,6 +70,11 @@ namespace ImageGalleries.WebApi.Controllers
         public async Task<IActionResult> GetScoresOfUser(string userId)
         {
             var scores = await _userRepository.GetScoresOfUser(userId);
+            if (scores == null)
+            {
+                return BadRequest("No user");
+            }
+
             var scoresDto = _mapper.Map<ICollection<ScoreDto>>(scores);
 
             return Ok(scoresDto);
@@ -63,6 +84,11 @@ namespace ImageGalleries.WebApi.Controllers
         public async Task<IActionResult> GetCommentsOfUser(string userId)
         {
             var comments = await _userRepository.GetCommentsOfUser(userId);
+            if (comments == null)
+            {
+                return BadRequest("No user");
+            }
+
             var commentsDto = _mapper.Map<ICollection<CommentDto>>(comments);
 
             return Ok(commentsDto);
@@ -142,7 +168,7 @@ namespace ImageGalleries.WebApi.Controllers
 
         [Authorize]
         [HttpDelete("remove-comment")]
-        public async Task<IActionResult> RemoveComment([FromBody] string commentId)
+        public async Task<IActionResult> RemoveComment([FromBody] RemoveCommentRequest request)
         {
             var userId = HttpContext.User.FindFirstValue("UserId") ?? string.Empty;
             var user = await _userRepository.GetUser(userId);
@@ -150,6 +176,8 @@ namespace ImageGalleries.WebApi.Controllers
             {
                 return Unauthorized();
             }
+
+            var commentId = request.CommentId;
 
             var comment = await _userRepository.GetComment(commentId);
             if (comment == null) 
