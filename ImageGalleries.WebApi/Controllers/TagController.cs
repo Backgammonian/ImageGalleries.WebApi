@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ImageGalleries.WebApi.Data;
 using ImageGalleries.WebApi.DTOs;
+using ImageGalleries.WebApi.Models;
 using ImageGalleries.WebApi.Repositories.Pictures;
 using ImageGalleries.WebApi.Repositories.Tags;
 using ImageGalleries.WebApi.Repositories.Users;
@@ -44,6 +45,11 @@ namespace ImageGalleries.WebApi.Controllers
         public async Task<IActionResult> GetTag(string tagName)
         {
             var tag = await _tagRepository.GetTag(tagName);
+            if (tag == null)
+            {
+                return BadRequest("No tag");
+            }
+
             var tagDto = _mapper.Map<TagDto>(tag);
 
             return Ok(tagDto);
@@ -53,6 +59,11 @@ namespace ImageGalleries.WebApi.Controllers
         public async Task<IActionResult> GetPicturesByTag(string tagName)
         {
             var pictures = await _tagRepository.GetPicturesByTag(tagName);
+            if (pictures == null)
+            {
+                return BadRequest("No tag");
+            }
+
             var picturesDto = _mapper.Map<ICollection<PictureDto>>(pictures);
 
             return Ok(picturesDto);
@@ -75,8 +86,10 @@ namespace ImageGalleries.WebApi.Controllers
 
         [Authorize(Roles = Roles.AdminRole)]
         [HttpDelete("remove")]
-        public async Task<IActionResult> RemoveTag([FromBody] string tagName)
+        public async Task<IActionResult> RemoveTag([FromBody] RemoveTagRequest request)
         {
+            var tagName = request.TagName;
+
             var tag = await _tagRepository.GetTag(tagName);
             if (tag == null)
             {
@@ -116,7 +129,7 @@ namespace ImageGalleries.WebApi.Controllers
 
         [Authorize]
         [HttpPost("add-tag-to-picture")]
-        public async Task<IActionResult> AddTagToPicture([FromBody] string tagName, string pictureId)
+        public async Task<IActionResult> AddTagToPicture([FromBody] AddTagToPictureRequest request)
         {
             var userId = HttpContext.User.FindFirstValue("UserId") ?? string.Empty;
             var user = await _userRepository.GetUser(userId);
@@ -124,6 +137,9 @@ namespace ImageGalleries.WebApi.Controllers
             {
                 return Unauthorized();
             }
+
+            var tagName = request.TagName;
+            var pictureId = request.PictureId;
 
             var tag = await _tagRepository.GetTag(tagName);
             if (tag == null)
@@ -154,7 +170,7 @@ namespace ImageGalleries.WebApi.Controllers
 
         [Authorize]
         [HttpDelete("remove-tag-from-picture")]
-        public async Task<IActionResult> RemoveTagFromPicture([FromBody] string tagName, string pictureId)
+        public async Task<IActionResult> RemoveTagFromPicture([FromBody] RemoveTagFromPictureRequest request)
         {
             var userId = HttpContext.User.FindFirstValue("UserId") ?? string.Empty;
             var user = await _userRepository.GetUser(userId);
@@ -162,6 +178,9 @@ namespace ImageGalleries.WebApi.Controllers
             {
                 return Unauthorized();
             }
+
+            var tagName = request.TagName;
+            var pictureId = request.PictureId;
 
             var tag = await _tagRepository.GetTag(tagName);
             if (tag == null)

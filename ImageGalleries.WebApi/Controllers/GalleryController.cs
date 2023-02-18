@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ImageGalleries.WebApi.Data;
 using ImageGalleries.WebApi.DTOs;
+using ImageGalleries.WebApi.Models;
 using ImageGalleries.WebApi.Repositories.Galleries;
 using ImageGalleries.WebApi.Repositories.Users;
 using ImageGalleries.WebApi.Requests;
@@ -12,13 +13,13 @@ namespace ImageGalleries.WebApi.Controllers
 {
     [ApiController]
     [Route("api/gallery")]
-    public class GalleyController : Controller
+    public class GalleryController : Controller
     {
         private readonly IGalleryRepository _galleryRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public GalleyController(IGalleryRepository galleryRepository,
+        public GalleryController(IGalleryRepository galleryRepository,
             IUserRepository userRepository,
             IMapper mapper)
         {
@@ -40,6 +41,11 @@ namespace ImageGalleries.WebApi.Controllers
         public async Task<IActionResult> GetGallery(string galleryId)
         {
             var gallery = await _galleryRepository.GetGallery(galleryId);
+            if (gallery == null)
+            {
+                return BadRequest("No gallery");
+            }
+
             var galleryDto = _mapper.Map<GalleryDto>(gallery);
 
             return Ok(galleryDto);
@@ -49,6 +55,11 @@ namespace ImageGalleries.WebApi.Controllers
         public async Task<IActionResult> GetGalleryOwner(string galleryId)
         {
             var user = await _galleryRepository.GetGalleryOwner(galleryId);
+            if (user == null)
+            {
+                return BadRequest("No gallery");
+            }
+
             var userDto = _mapper.Map<UserDto>(user);
 
             return Ok(userDto);
@@ -58,6 +69,11 @@ namespace ImageGalleries.WebApi.Controllers
         public async Task<IActionResult> GetPicturesFromGallery(string galleryId)
         {
             var pictures = await _galleryRepository.GetPicturesFromGallery(galleryId);
+            if (pictures == null)
+            {
+                return BadRequest("No gallery");
+            }
+
             var picturesDto = _mapper.Map<ICollection<PictureDto>>(pictures);
 
             return Ok(picturesDto);
@@ -88,7 +104,7 @@ namespace ImageGalleries.WebApi.Controllers
 
         [Authorize]
         [HttpPost("add-image")]
-        public async Task<IActionResult> AddPictureToGallery([FromBody] string galleryId, string pictureId)
+        public async Task<IActionResult> AddPictureToGallery([FromBody] AddPictureToGalleryRequest request)
         {
             var userId = HttpContext.User.FindFirstValue("UserId") ?? string.Empty;
             var user = await _userRepository.GetUser(userId);
@@ -96,6 +112,9 @@ namespace ImageGalleries.WebApi.Controllers
             {
                 return Unauthorized();
             }
+
+            var galleryId = request.GalleryId;
+            var pictureId = request.PictureId;
 
             var gallery = await _galleryRepository.GetGallery(galleryId);
             if (gallery == null)
@@ -119,7 +138,7 @@ namespace ImageGalleries.WebApi.Controllers
 
         [Authorize]
         [HttpDelete("remove-image")]
-        public async Task<IActionResult> RemovePictureFromGallery([FromBody] string galleryId, string pictureId)
+        public async Task<IActionResult> RemovePictureFromGallery(RemovePictureFromGalleryRequest request)
         {
             var userId = HttpContext.User.FindFirstValue("UserId") ?? string.Empty;
             var user = await _userRepository.GetUser(userId);
@@ -127,6 +146,9 @@ namespace ImageGalleries.WebApi.Controllers
             {
                 return Unauthorized();
             }
+
+            var galleryId = request.GalleryId;
+            var pictureId = request.PictureId;
 
             var gallery = await _galleryRepository.GetGallery(galleryId);
             if (gallery == null)
@@ -150,9 +172,7 @@ namespace ImageGalleries.WebApi.Controllers
 
         [Authorize]
         [HttpPut("update")]
-        public async Task<IActionResult> UpdateGalleryNameAndDescription([FromBody] string galleryId,
-            string newName,
-            string newDescription)
+        public async Task<IActionResult> UpdateGalleryNameAndDescription([FromBody] UpdateGalleryRequest request)
         {
             var userId = HttpContext.User.FindFirstValue("UserId") ?? string.Empty;
             var user = await _userRepository.GetUser(userId);
@@ -160,6 +180,10 @@ namespace ImageGalleries.WebApi.Controllers
             {
                 return Unauthorized();
             }
+
+            var galleryId = request.GalleryId;
+            var newName = request.NewName;
+            var newDescription = request.NewDescription;
 
             var gallery = await _galleryRepository.GetGallery(galleryId);
             if (gallery == null)
@@ -184,7 +208,7 @@ namespace ImageGalleries.WebApi.Controllers
 
         [Authorize]
         [HttpDelete("remove")]
-        public async Task<IActionResult> RemoveGallery([FromBody] string galleryId)
+        public async Task<IActionResult> RemoveGallery([FromBody] RemoveGalleryRequest request)
         {
             var userId = HttpContext.User.FindFirstValue("UserId") ?? string.Empty;
             var user = await _userRepository.GetUser(userId);
@@ -192,6 +216,8 @@ namespace ImageGalleries.WebApi.Controllers
             {
                 return Unauthorized();
             }
+
+            var galleryId = request.GalleryId;
 
             var gallery = await _galleryRepository.GetGallery(galleryId);
             if (gallery == null)

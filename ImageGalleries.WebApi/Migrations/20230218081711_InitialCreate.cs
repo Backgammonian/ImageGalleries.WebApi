@@ -315,7 +315,6 @@ namespace ImageGalleries.WebApi.Migrations
                 {
                     PictureId = table.Column<string>(type: "text", nullable: false),
                     UserId = table.Column<string>(type: "text", nullable: false),
-                    Id = table.Column<string>(type: "text", nullable: true),
                     Amount = table.Column<int>(type: "integer", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },

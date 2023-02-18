@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ImageGalleries.WebApi.Data;
 using ImageGalleries.WebApi.DTOs;
+using ImageGalleries.WebApi.Models;
 using ImageGalleries.WebApi.Repositories.Pictures;
 using ImageGalleries.WebApi.Repositories.Users;
 using ImageGalleries.WebApi.Requests;
@@ -40,6 +41,11 @@ namespace ImageGalleries.WebApi.Controllers
         public async Task<IActionResult> GetPicture(string pictureId)
         {
             var picture = await _pictureRepository.GetPicture(pictureId);
+            if (picture == null)
+            {
+                return BadRequest("No picture");
+            }
+
             var pictureDto = _mapper.Map<PictureDto>(picture);
 
             return Ok(pictureDto);
@@ -49,6 +55,11 @@ namespace ImageGalleries.WebApi.Controllers
         public async Task<IActionResult> GetUploaderOfPicture(string pictureId)
         {
             var uploader = await _pictureRepository.GetUploaderOfPicture(pictureId);
+            if (uploader == null)
+            {
+                return BadRequest("No picture");
+            }
+
             var uploaderDto = _mapper.Map<UserDto>(uploader);
 
             return Ok(uploaderDto);
@@ -58,6 +69,11 @@ namespace ImageGalleries.WebApi.Controllers
         public async Task<IActionResult> GetCommentsOfPicture(string pictureId)
         {
             var comments = await _pictureRepository.GetCommentsOfPicture(pictureId);
+            if (comments == null)
+            {
+                return BadRequest("No picture");
+            }
+
             var commentsDto = _mapper.Map<ICollection<CommentDto>>(comments);
 
             return Ok(commentsDto);
@@ -75,6 +91,11 @@ namespace ImageGalleries.WebApi.Controllers
         public async Task<IActionResult> GetTagsOfPicture(string pictureId)
         {
             var tags = await _pictureRepository.GetTagsOfPicture(pictureId);
+            if (tags == null)
+            {
+                return BadRequest("No picture");
+            }
+
             var tagsDto = _mapper.Map<ICollection<TagDto>>(tags);
 
             return Ok(tagsDto);
@@ -84,6 +105,11 @@ namespace ImageGalleries.WebApi.Controllers
         public async Task<IActionResult> GetGalleriesThatContainPicture(string pictureId)
         {
             var galleries = await _pictureRepository.GetGalleriesThatContainPicture(pictureId);
+            if (galleries == null)
+            {
+                return BadRequest("No picture");
+            }
+
             var galleriesDto = _mapper.Map<ICollection<GalleryDto>>(galleries);
 
             return Ok(galleriesDto);
@@ -101,6 +127,7 @@ namespace ImageGalleries.WebApi.Controllers
             }
 
             var picture = addPictureRequest.Picture;
+            var description = addPictureRequest.PictureDescription;
 
             if (picture == null ||
                 picture.Length == 0)
@@ -110,7 +137,7 @@ namespace ImageGalleries.WebApi.Controllers
 
             var added = await _pictureRepository.AddPicture(picture,
                 userId,
-                addPictureRequest.PictureDescription);
+                description);
 
             if (added)
             {
@@ -122,7 +149,7 @@ namespace ImageGalleries.WebApi.Controllers
 
         [Authorize]
         [HttpDelete("remove")]
-        public async Task<IActionResult> RemovePicture([FromBody] string pictureId)
+        public async Task<IActionResult> RemovePicture([FromBody] RemovePictureRequest request)
         {
             var userId = HttpContext.User.FindFirstValue("UserId") ?? string.Empty;
             var user = await _userRepository.GetUser(userId);
@@ -130,6 +157,8 @@ namespace ImageGalleries.WebApi.Controllers
             {
                 return Unauthorized();
             }
+
+            var pictureId = request.PictureId;
 
             var picture = await _pictureRepository.GetPicture(pictureId);
             if (picture == null)
@@ -154,7 +183,7 @@ namespace ImageGalleries.WebApi.Controllers
 
         [Authorize]
         [HttpPut("update-description")]
-        public async Task<IActionResult> UpdatePictureDescription([FromBody] string pictureId, string description)
+        public async Task<IActionResult> UpdatePictureDescription([FromBody] UpdatePictureRequest request)
         {
             var userId = HttpContext.User.FindFirstValue("UserId") ?? string.Empty;
             var user = await _userRepository.GetUser(userId);
@@ -162,6 +191,9 @@ namespace ImageGalleries.WebApi.Controllers
             {
                 return Unauthorized();
             }
+
+            var pictureId = request.PictureId;
+            var description = request.Description;
 
             var picture = await _pictureRepository.GetPicture(pictureId);
             if (picture == null)

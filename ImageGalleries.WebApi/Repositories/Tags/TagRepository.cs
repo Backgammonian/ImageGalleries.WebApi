@@ -35,12 +35,12 @@ namespace ImageGalleries.WebApi.Repositories.Tags
                 .FirstOrDefaultAsync(x => x.Name == tagName);
         }
 
-        public async Task<ICollection<Picture>> GetPicturesByTag(string tagName)
+        public async Task<ICollection<Picture>?> GetPicturesByTag(string tagName)
         {
             var any = await DoesTagExist(tagName);
             if (!any)
             {
-                return new List<Picture>();
+                return null;
             }
 
             var picturesByTag = await _dataContext.PictureTags
@@ -66,6 +66,12 @@ namespace ImageGalleries.WebApi.Repositories.Tags
 
         public async Task<bool> CreateTag(string name, string description = "")
         {
+            var any = await DoesTagExist(name);
+            if (any)
+            {
+                return false;
+            }
+
             var tag = new Tag()
             {
                 Name = name,
@@ -80,6 +86,14 @@ namespace ImageGalleries.WebApi.Repositories.Tags
 
         public async Task<bool> AddTagToPicture(Tag tag, Picture picture)
         {
+            var any = await _dataContext.PictureTags
+                .AnyAsync(x => x.TagName == tag.Name && x.PictureId == picture.Id);
+
+            if (any)
+            {
+                return false;
+            }
+
             var pictureTag = new PictureTag()
             {
                 PictureId = picture.Id,
@@ -93,6 +107,14 @@ namespace ImageGalleries.WebApi.Repositories.Tags
 
         public async Task<bool> RemoveTagFromPicture(Tag tag, Picture picture)
         {
+            var any = await _dataContext.PictureTags
+                .AnyAsync(x => x.TagName == tag.Name && x.PictureId == picture.Id);
+
+            if (!any)
+            {
+                return false;
+            }
+
             var pictureTag = new PictureTag()
             {
                 PictureId = picture.Id,
@@ -106,10 +128,20 @@ namespace ImageGalleries.WebApi.Repositories.Tags
 
         public async Task<bool> UpdateTag(Tag tag, string newName, string newDescription)
         {
-            tag.Name = newName;
-            tag.Description = newDescription;
+            if (await DoesTagExist(newName))
+            {
+                return false;
+            }
 
-            _dataContext.Tags.Update(tag);
+            var newTag = new Tag()
+            {
+                Name = newName,
+                Description = newDescription,
+                CreationDate = tag.CreationDate
+            };
+
+            _dataContext.Tags.Remove(tag);
+            await _dataContext.Tags.AddAsync(newTag);
 
             return await Save();
         }

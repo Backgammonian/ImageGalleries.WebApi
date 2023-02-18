@@ -6,10 +6,10 @@ namespace ImageGalleries.WebApi.Repositories.Pictures
     {
         Task<User?> GetUploaderOfPicture(string pictureId);
         Task<ICollection<Picture>> GetPictures();
-        Task<ICollection<Comment>> GetCommentsOfPicture(string pictureId);
+        Task<ICollection<Comment>?> GetCommentsOfPicture(string pictureId);
         Task<int> GetScoreOfPicture(string pictureId);
-        Task<ICollection<Tag>> GetTagsOfPicture(string pictureId);
-        Task<ICollection<Gallery>> GetGalleriesThatContainPicture(string pictureId);
+        Task<ICollection<Tag>?> GetTagsOfPicture(string pictureId);
+        Task<ICollection<Gallery>?> GetGalleriesThatContainPicture(string pictureId);
         Task<bool> DoesPictureExist(string pictureId);
         Task<Picture?> GetPicture(string pictureId);
         Task<bool> AddPicture(IFormFile formFile, string userId, string description = "");

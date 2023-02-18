@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ImageGalleries.WebApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230214075001_InitialCreate")]
+    [Migration("20230218081711_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -171,9 +171,6 @@ namespace ImageGalleries.WebApi.Migrations
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
 
                     b.HasKey("PictureId", "UserId");
 

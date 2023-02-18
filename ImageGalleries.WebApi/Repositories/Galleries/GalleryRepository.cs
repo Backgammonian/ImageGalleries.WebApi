@@ -51,12 +51,12 @@ namespace ImageGalleries.WebApi.Repositories.Galleries
                 .FirstOrDefaultAsync(x => x.Id == gallery.UserId);
         }
 
-        public async Task<ICollection<Picture>> GetPicturesFromGallery(string galleryId)
+        public async Task<ICollection<Picture>?> GetPicturesFromGallery(string galleryId)
         {
             var any = await DoesGalleryExist(galleryId);
             if (!any)
             {
-                return new List<Picture>();
+                return null;
             }
 
             var picturesFromGallery = await _dataContext.PictureGalleries
@@ -98,6 +98,14 @@ namespace ImageGalleries.WebApi.Repositories.Galleries
 
         public async Task<bool> AddPictureToGallery(Gallery gallery, string pictureId)
         {
+            var any = await _dataContext.PictureGalleries
+                .AnyAsync(x => x.GalleryId == gallery.Id && x.PictureId == pictureId);
+
+            if (any)
+            {
+                return false;
+            }
+
             var pictureGallery = new PictureGallery()
             {
                 PictureId = pictureId,
@@ -111,6 +119,14 @@ namespace ImageGalleries.WebApi.Repositories.Galleries
 
         public async Task<bool> RemovePictureFromGallery(Gallery gallery, string pictureId)
         {
+            var any = await _dataContext.PictureGalleries
+                .AnyAsync(x => x.GalleryId == gallery.Id && x.PictureId == pictureId);
+
+            if (!any)
+            {
+                return false;
+            }
+
             var pictureGallery = new PictureGallery()
             {
                 PictureId = pictureId,

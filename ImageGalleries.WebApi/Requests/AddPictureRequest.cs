@@ -7,7 +7,6 @@ namespace ImageGalleries.WebApi.Requests
         [Required]
         public IFormFile? Picture { get; set; }
 
-        [Required]
         public string PictureDescription { get; set; } = string.Empty;
     }
 }

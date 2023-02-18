@@ -8,7 +8,7 @@ namespace ImageGalleries.WebApi.Repositories.Galleries
         Task<bool> DoesGalleryExist(string galleryId);
         Task<Gallery?> GetGallery(string galleryId);
         Task<User?> GetGalleryOwner(string galleryId);
-        Task<ICollection<Picture>> GetPicturesFromGallery(string galleryId);
+        Task<ICollection<Picture>?> GetPicturesFromGallery(string galleryId);
         Task<bool> CreateGallery(string userId, string galleryName, string galleryDescription = "");
         Task<bool> AddPictureToGallery(Gallery gallery, string pictureId);
         Task<bool> RemovePictureFromGallery(Gallery gallery, string pictureId);

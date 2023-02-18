@@ -21,36 +21,66 @@ namespace ImageGalleries.WebApi.Repositories.Users
             _randomGenerator = randomGenerator;
         }
 
-        public async Task<ICollection<Picture>> GetPicturesOfUser(string userId)
+        public async Task<ICollection<Picture>?> GetPicturesOfUser(string userId)
         {
+            var any = await DoesUserExist(userId);
+            if (!any)
+            {
+                return null;
+            }
+
             return await _dataContext.Pictures
                 .AsNoTracking()
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
         }
 
-        public async Task<ICollection<Gallery>> GetGalleriesOfUser(string userId)
+        public async Task<ICollection<Gallery>?> GetGalleriesOfUser(string userId)
         {
+            var any = await DoesUserExist(userId);
+            if (!any)
+            {
+                return null;
+            }
+
             return await _dataContext.Galleries
                 .AsNoTracking()
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
         }
 
-        public async Task<ICollection<Score>> GetScoresOfUser(string userId)
+        public async Task<ICollection<Score>?> GetScoresOfUser(string userId)
         {
+            var any = await DoesUserExist(userId);
+            if (!any)
+            {
+                return null;
+            }
+
             return await _dataContext.Scores
                 .AsNoTracking()
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
         }
 
-        public async Task<ICollection<Comment>> GetCommentsOfUser(string userId)
+        public async Task<ICollection<Comment>?> GetCommentsOfUser(string userId)
         {
+            var any = await DoesUserExist(userId);
+            if (!any)
+            {
+                return null;
+            }
+
             return await _dataContext.Comments
                 .AsNoTracking()
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
+        }
+
+        public async Task<bool> DoesUserExist(string userId)
+        {
+            return await _dataContext.Users
+                .AnyAsync(x => x.Id == userId);
         }
 
         public async Task<User?> GetUser(string userId)
@@ -85,6 +115,14 @@ namespace ImageGalleries.WebApi.Repositories.Users
 
         public async Task<bool> AddCommentToPicture(string userId, string pictureId, string content)
         {
+            var any = await _dataContext.Pictures
+                .AnyAsync(x => x.Id == pictureId);
+
+            if (!any)
+            {
+                return false;
+            }
+
             var comment = new Comment()
             {
                 Id = _randomGenerator.GetRandomId(),
@@ -115,6 +153,14 @@ namespace ImageGalleries.WebApi.Repositories.Users
 
         public async Task<bool> AddScoreToPicture(string userId, string pictureId, int amount)
         {
+            var any = await _dataContext.Pictures
+                .AnyAsync(x => x.Id == pictureId);
+
+            if (!any)
+            {
+                return false;
+            }
+
             var score = new Score()
             {
                 PictureId = pictureId,
