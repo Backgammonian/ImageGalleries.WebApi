@@ -8,10 +8,13 @@ namespace ImageGalleries.WebApi.Repositories.Tags
     public class TagRepository : ITagRepository
     {
         private readonly DataContext _dataContext;
+        private readonly IRandomGenerator _randomGenerator;
 
-        public TagRepository(DataContext dataContext)
+        public TagRepository(DataContext dataContext,
+            IRandomGenerator randomGenerator)
         {
             _dataContext = dataContext;
+            _randomGenerator = randomGenerator;
         }
 
         public async Task<ICollection<Tag>> GetTags()
@@ -37,15 +40,15 @@ namespace ImageGalleries.WebApi.Repositories.Tags
 
         public async Task<ICollection<Picture>?> GetPicturesByTag(string tagName)
         {
-            var any = await DoesTagExist(tagName);
-            if (!any)
+            var tag = await GetTag(tagName);
+            if (tag == null)
             {
                 return null;
             }
 
             var picturesByTag = await _dataContext.PictureTags
                 .AsNoTracking()
-                .Where(x => x.TagName == tagName)
+                .Where(x => x.TagId == tag.Id)
                 .ToListAsync();
 
             var pictures = new List<Picture>();
@@ -74,6 +77,7 @@ namespace ImageGalleries.WebApi.Repositories.Tags
 
             var tag = new Tag()
             {
+                Id = _randomGenerator.GetRandomId(),
                 Name = name,
                 Description = description,
                 CreationDate = DateTime.UtcNow
@@ -87,7 +91,8 @@ namespace ImageGalleries.WebApi.Repositories.Tags
         public async Task<bool> AddTagToPicture(Tag tag, Picture picture)
         {
             var any = await _dataContext.PictureTags
-                .AnyAsync(x => x.TagName == tag.Name && x.PictureId == picture.Id);
+                .AnyAsync(x => x.TagId == tag.Id &&
+                    x.PictureId == picture.Id);
 
             if (any)
             {
@@ -97,7 +102,7 @@ namespace ImageGalleries.WebApi.Repositories.Tags
             var pictureTag = new PictureTag()
             {
                 PictureId = picture.Id,
-                TagName = tag.Name
+                TagId = tag.Id
             };
 
             await _dataContext.PictureTags.AddAsync(pictureTag);
@@ -108,7 +113,8 @@ namespace ImageGalleries.WebApi.Repositories.Tags
         public async Task<bool> RemoveTagFromPicture(Tag tag, Picture picture)
         {
             var any = await _dataContext.PictureTags
-                .AnyAsync(x => x.TagName == tag.Name && x.PictureId == picture.Id);
+                .AnyAsync(x => x.TagId == tag.Id &&
+                    x.PictureId == picture.Id);
 
             if (!any)
             {
@@ -118,7 +124,7 @@ namespace ImageGalleries.WebApi.Repositories.Tags
             var pictureTag = new PictureTag()
             {
                 PictureId = picture.Id,
-                TagName = tag.Name
+                TagId = tag.Id
             };
 
             _dataContext.PictureTags.Remove(pictureTag);
@@ -133,15 +139,10 @@ namespace ImageGalleries.WebApi.Repositories.Tags
                 return false;
             }
 
-            var newTag = new Tag()
-            {
-                Name = newName,
-                Description = newDescription,
-                CreationDate = tag.CreationDate
-            };
+            tag.Name = newName;
+            tag.Description = newDescription;
 
-            _dataContext.Tags.Remove(tag);
-            await _dataContext.Tags.AddAsync(newTag);
+            _dataContext.Tags.Update(tag);
 
             return await Save();
         }

@@ -67,8 +67,8 @@ namespace ImageGalleries.WebApi
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddSingleton<AccessTokenGenerator>();
             builder.Services.AddSingleton<RefreshTokenGenerator>();
-            builder.Services.AddSingleton<RefreshTokenValidator>();
-            builder.Services.AddScoped<Authenticator>();
+            builder.Services.AddSingleton<IRefreshTokenValidator, RefreshTokenValidator>();
+            builder.Services.AddScoped<IAuthenticator, Authenticator>();
             builder.Services.AddSingleton<TokenGenerator>();
             builder.Services.AddScoped<IRefreshTokenRepository, DatabaseRefreshTokenRepository>();
             builder.Services.AddSingleton<IRandomGenerator, RandomGenerator>();

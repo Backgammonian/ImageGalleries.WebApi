@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ImageGalleries.WebApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230218081711_InitialCreate")]
+    [Migration("20230219043257_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -128,12 +128,12 @@ namespace ImageGalleries.WebApi.Migrations
                     b.Property<string>("PictureId")
                         .HasColumnType("text");
 
-                    b.Property<string>("TagName")
+                    b.Property<string>("TagId")
                         .HasColumnType("text");
 
-                    b.HasKey("PictureId", "TagName");
+                    b.HasKey("PictureId", "TagId");
 
-                    b.HasIndex("TagName");
+                    b.HasIndex("TagId");
 
                     b.ToTable("PictureTags");
                 });
@@ -181,7 +181,7 @@ namespace ImageGalleries.WebApi.Migrations
 
             modelBuilder.Entity("ImageGalleries.WebApi.Models.Tag", b =>
                 {
-                    b.Property<string>("Name")
+                    b.Property<string>("Id")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreationDate")
@@ -191,7 +191,11 @@ namespace ImageGalleries.WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("Name");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Tags");
                 });
@@ -469,7 +473,7 @@ namespace ImageGalleries.WebApi.Migrations
 
                     b.HasOne("ImageGalleries.WebApi.Models.Tag", "Tag")
                         .WithMany("PictureTags")
-                        .HasForeignKey("TagName")
+                        .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

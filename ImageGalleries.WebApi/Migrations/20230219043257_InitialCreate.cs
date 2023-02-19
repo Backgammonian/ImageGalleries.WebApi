@@ -57,13 +57,14 @@ namespace ImageGalleries.WebApi.Migrations
                 name: "Tags",
                 columns: table => new
                 {
+                    Id = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tags", x => x.Name);
+                    table.PrimaryKey("PK_Tags", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -290,11 +291,11 @@ namespace ImageGalleries.WebApi.Migrations
                 columns: table => new
                 {
                     PictureId = table.Column<string>(type: "text", nullable: false),
-                    TagName = table.Column<string>(type: "text", nullable: false)
+                    TagId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PictureTags", x => new { x.PictureId, x.TagName });
+                    table.PrimaryKey("PK_PictureTags", x => new { x.PictureId, x.TagId });
                     table.ForeignKey(
                         name: "FK_PictureTags_Pictures_PictureId",
                         column: x => x.PictureId,
@@ -302,10 +303,10 @@ namespace ImageGalleries.WebApi.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PictureTags_Tags_TagName",
-                        column: x => x.TagName,
+                        name: "FK_PictureTags_Tags_TagId",
+                        column: x => x.TagId,
                         principalTable: "Tags",
-                        principalColumn: "Name",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -393,9 +394,9 @@ namespace ImageGalleries.WebApi.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PictureTags_TagName",
+                name: "IX_PictureTags_TagId",
                 table: "PictureTags",
-                column: "TagName");
+                column: "TagId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_UserId",

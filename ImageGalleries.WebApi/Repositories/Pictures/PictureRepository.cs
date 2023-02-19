@@ -94,7 +94,7 @@ namespace ImageGalleries.WebApi.Repositories.Pictures
             {
                 var tag = await _dataContext.Tags
                     .AsNoTracking()
-                    .FirstOrDefaultAsync(x => x.Name == pictureTag.TagName);
+                    .FirstOrDefaultAsync(x => x.Id == pictureTag.TagId);
 
                 if (tag != null)
                 {
