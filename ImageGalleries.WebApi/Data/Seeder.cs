@@ -145,8 +145,9 @@ namespace ImageGalleries.WebApi.Data
 
                 tags.Add(new Tag()
                 {
+                    Id = i.ToString(),
                     Name = $"Tag {id}",
-                    Description = $"This is tag {id}, also known as 'tagus {id}'",
+                    Description = $"This is tag {id}, also known as 'tag {id}'",
                     CreationDate = DateTime.UtcNow.AddHours(random.Next(-60, 20))
                 });
             }
@@ -189,31 +190,31 @@ namespace ImageGalleries.WebApi.Data
                 new PictureTag()
                 {
                     PictureId = pictures[0].Id,
-                    TagName = tags[0].Name
+                    TagId = tags[0].Id
                 },
 
                 new PictureTag()
                 {
                     PictureId = pictures[0].Id,
-                    TagName = tags[1].Name
+                    TagId = tags[1].Id
                 },
 
                 new PictureTag()
                 {
                     PictureId = pictures[1].Id,
-                    TagName = tags[0].Name
+                    TagId = tags[0].Id
                 },
 
                 new PictureTag()
                 {
                     PictureId = pictures[1].Id,
-                    TagName = tags[2].Name
+                    TagId = tags[2].Id
                 },
 
                 new PictureTag()
                 {
                     PictureId = pictures[2].Id,
-                    TagName = tags[0].Name
+                    TagId = tags[0].Id
                 },
             };
 

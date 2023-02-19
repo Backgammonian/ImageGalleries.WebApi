@@ -7,7 +7,7 @@ using ImageGalleries.WebApi.Services.TokenGenerators;
 
 namespace ImageGalleries.WebApi.Services.Authenticators
 {
-    public class Authenticator
+    public class Authenticator : IAuthenticator
     {
         private readonly AccessTokenGenerator _accessTokenGenerator;
         private readonly RefreshTokenGenerator _refreshTokenGenerator;

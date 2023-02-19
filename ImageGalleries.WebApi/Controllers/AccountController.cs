@@ -18,14 +18,14 @@ namespace ImageGalleries.WebApi.Controllers
     public class AccountController : Controller
     {
         private readonly UserManager<User> _userManager;
-        private readonly Authenticator _authenticator;
-        private readonly RefreshTokenValidator _refreshTokenValidator;
+        private readonly IAuthenticator _authenticator;
+        private readonly IRefreshTokenValidator _refreshTokenValidator;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IRandomGenerator _randomGenerator;
 
         public AccountController(UserManager<User> userManager,
-            Authenticator authenticator,
-            RefreshTokenValidator refreshTokenValidator,
+            IAuthenticator authenticator,
+            IRefreshTokenValidator refreshTokenValidator,
             IRefreshTokenRepository refreshTokenRepository,
             IRandomGenerator randomGenerator)
         {
@@ -138,7 +138,7 @@ namespace ImageGalleries.WebApi.Controllers
 
             await _refreshTokenRepository.Delete(refreshTokenDTO.Id);
 
-            var user = await _userManager.FindByIdAsync(refreshTokenDTO.UserId.ToString());
+            var user = await _userManager.FindByIdAsync(refreshTokenDTO.UserId);
             if (user == null)
             {
                 return NotFound(new ErrorResponse("User not found."));
@@ -175,7 +175,7 @@ namespace ImageGalleries.WebApi.Controllers
             var passwordCheck = await _userManager.CheckPasswordAsync(user, changePasswordRequest.OldPassword);
             if (!passwordCheck)
             {
-                return BadRequest("Old password doesn't match");
+                return Unauthorized("Old password doesn't match");
             }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);

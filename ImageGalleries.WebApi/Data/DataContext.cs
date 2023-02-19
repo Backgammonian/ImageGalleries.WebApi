@@ -35,7 +35,7 @@ namespace ImageGalleries.WebApi.Data
                     .HasForeignKey(pg => pg.GalleryId);
 
             modelBuilder.Entity<PictureTag>()
-                    .HasKey(pt => new { pt.PictureId, pt.TagName });
+                    .HasKey(pt => new { pt.PictureId, pt.TagId });
             modelBuilder.Entity<PictureTag>()
                     .HasOne(pt => pt.Picture)
                     .WithMany(p => p.PictureTags)
@@ -43,7 +43,7 @@ namespace ImageGalleries.WebApi.Data
             modelBuilder.Entity<PictureTag>()
                     .HasOne(pt => pt.Tag)
                     .WithMany(t => t.PictureTags)
-                    .HasForeignKey(pt => pt.TagName);
+                    .HasForeignKey(pt => pt.TagId);
 
             modelBuilder.Entity<Score>()
                     .HasKey(s => new { s.PictureId, s.UserId });

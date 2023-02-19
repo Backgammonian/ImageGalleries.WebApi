@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ImageGalleries.WebApi.Services.TokenValidators
 {
-    public class RefreshTokenValidator
+    public class RefreshTokenValidator : IRefreshTokenValidator
     {
         private readonly AuthenticationConfiguration _configuration;
 
