@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using ImageGalleries.WebApi.Data;
 using ImageGalleries.WebApi.DTOs;
-using ImageGalleries.WebApi.Models;
 using ImageGalleries.WebApi.Repositories.Users;
 using ImageGalleries.WebApi.Requests;
 using Microsoft.AspNetCore.Authorization;

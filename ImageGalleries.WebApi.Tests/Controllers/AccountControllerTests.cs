@@ -32,14 +32,42 @@ namespace ImageGalleries.WebApi.Tests.Controllers
             _randomGenerator = A.Fake<IRandomGenerator>();
         }
 
-        [Fact]
-        public async Task AccountController_Register_ReturnsOK()
+        private AccountController GetController()
         {
-            _accountController = new AccountController(_userManager,
+            return new AccountController(_userManager,
                 _authenticator,
                 _refreshTokenValidator,
                 _refreshTokenRepository,
                 _randomGenerator);
+        }
+
+        private AccountController GetControllerWithContext(string userId)
+        {
+            var claims = new List<Claim>()
+            {
+                new Claim("UserId", userId)
+            };
+            var httpContext = new DefaultHttpContext();
+            httpContext.User.AddIdentity(new ClaimsIdentity(claims));
+            var controllerContext = new ControllerContext()
+            {
+                HttpContext = httpContext,
+            };
+
+            return new AccountController(_userManager,
+                _authenticator,
+                _refreshTokenValidator,
+                _refreshTokenRepository,
+                _randomGenerator)
+            {
+                ControllerContext = controllerContext
+            };
+        }
+
+        [Fact]
+        public async Task AccountController_Register_ReturnsOK()
+        {
+            _accountController = GetController();
 
             var registerRequest = new RegisterRequest()
             {
@@ -48,7 +76,6 @@ namespace ImageGalleries.WebApi.Tests.Controllers
                 Password = "123456",
                 ConfirmPassword = "123456"
             };
-
             var registrationUser = A.Fake<User>();
             var registrationResult = IdentityResult.Success;
             A.CallTo(() => _userManager.CreateAsync(registrationUser, registerRequest.Password)).Returns(registrationResult);
@@ -63,11 +90,7 @@ namespace ImageGalleries.WebApi.Tests.Controllers
         [Fact]
         public async Task AccountController_Login_ReturnsOK()
         {
-            _accountController = new AccountController(_userManager,
-                _authenticator,
-                _refreshTokenValidator,
-                _refreshTokenRepository,
-                _randomGenerator);
+            _accountController = GetController();
 
             var loginRequest = A.Fake<LoginRequest>();
             var user = A.Fake<User>();
@@ -86,11 +109,7 @@ namespace ImageGalleries.WebApi.Tests.Controllers
         [Fact]
         public async Task AccountController_Refresh_ReturnsOK()
         {
-            _accountController = new AccountController(_userManager,
-                _authenticator,
-                _refreshTokenValidator,
-                _refreshTokenRepository,
-                _randomGenerator);
+            _accountController = GetController();
 
             var refreshRequest = A.Fake<RefreshRequest>();
             var refreshTokenDTO = A.Fake<RefreshToken>();
@@ -112,26 +131,8 @@ namespace ImageGalleries.WebApi.Tests.Controllers
         [Fact]
         public async Task AccountController_ChangePassword_ReturnsOK()
         {
-            var httpContext = new DefaultHttpContext();
             var userId = "1";
-            var claims = new List<Claim>()
-            {
-                new Claim("UserId", userId)
-            };
-            httpContext.User.AddIdentity(new ClaimsIdentity(claims));
-            var controllerContext = new ControllerContext()
-            {
-                HttpContext = httpContext,
-            };
-
-            _accountController = new AccountController(_userManager,
-                _authenticator,
-                _refreshTokenValidator,
-                _refreshTokenRepository,
-                _randomGenerator)
-            {
-                ControllerContext = controllerContext
-            };
+            _accountController = GetControllerWithContext(userId);
 
             var changePasswordRequest = new ChangePasswordRequest()
             {
@@ -139,7 +140,6 @@ namespace ImageGalleries.WebApi.Tests.Controllers
                 NewPassword = "134",
                 ConfirmNewPassword = "134"
             };
-
             var user = A.Fake<User>();
             var token = "someRandomToken";
             var resetPasswordResult = IdentityResult.Success;
@@ -158,26 +158,8 @@ namespace ImageGalleries.WebApi.Tests.Controllers
         [Fact]
         public async Task AccountController_Logout_ReturnsOK()
         {
-            var httpContext = new DefaultHttpContext();
             var userId = "1";
-            var claims = new List<Claim>()
-            {
-                new Claim("UserId", userId)
-            };
-            httpContext.User.AddIdentity(new ClaimsIdentity(claims));
-            var controllerContext = new ControllerContext()
-            {
-                HttpContext = httpContext,
-            };
-
-            _accountController = new AccountController(_userManager,
-                _authenticator,
-                _refreshTokenValidator,
-                _refreshTokenRepository,
-                _randomGenerator)
-            {
-                ControllerContext = controllerContext
-            };
+            _accountController = GetControllerWithContext(userId);
 
             A.CallTo(() => _refreshTokenRepository.DeleteAll(userId));
 
