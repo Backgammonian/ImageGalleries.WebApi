@@ -14,6 +14,8 @@ namespace ImageGalleries.WebApi.Tests
             var dataContext = new DataContext(options);
             var seeder = new Seeder(dataContext);
             var users = seeder.GetUsers();
+            dataContext.Users.Add(users.Item1);
+            dataContext.Users.AddRange(users.Item2);
             await seeder.SeedData(users.Item1, users.Item2);
 
             return dataContext;
