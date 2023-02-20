@@ -1,5 +1,5 @@
 # ImageGalleries.WebApi
-Relatively simple project for hosting and sharing images based on ASP.NET Core WebAPI.
+Relatively simple project for sharing and collecting images based on ASP.NET Core WebAPI. This project uses authentication with JSON Web tokens (JWT).
 
 This project was created in educational purposes only.
 ## Showcase of APIs
