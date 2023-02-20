@@ -1,0 +1,724 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+ Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="1.0.0-beta1" use-changelog="false" last-position="0,0" last-zoom="0.65" max-obj-count="20"
+	 default-schema="public" default-owner="postgres"
+	 layers="Default layer"
+	 active-layers="0"
+	 layer-name-colors="#000000"
+	 layer-rect-colors="#b4b4b4"
+	 show-layer-names="false" show-layer-rects="false">
+<role name="pg_database_owner"
+ inherit="true"
+ password="********"
+ sql-disabled="true">
+</role>
+
+<database name="ImageGalleriesDB" encoding="UTF8" lc-collate="English_United States.1252" lc-ctype="English_United States.1252" is-template="false" allow-conns="true">
+	<role name="postgres"/>
+	<tablespace name="pg_default"/>
+</database>
+
+<schema name="public" layers="0" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<table name="__EFMigrationsHistory" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="60" y="60"/>
+	<column name="MigrationId" not-null="true">
+		<type name="character varying" length="150"/>
+	</column>
+	<column name="ProductVersion" not-null="true">
+		<type name="character varying" length="32"/>
+	</column>
+	<constraint name="PK___EFMigrationsHistory" type="pk-constr" table="public.&quot;__EFMigrationsHistory&quot;">
+		<columns names="MigrationId" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="AspNetRoles" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="500" y="60"/>
+	<column name="Id" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="Name">
+		<type name="character varying" length="256"/>
+	</column>
+	<column name="NormalizedName">
+		<type name="character varying" length="256"/>
+	</column>
+	<column name="ConcurrencyStamp">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="PK_AspNetRoles" type="pk-constr" table="public.&quot;AspNetRoles&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="AspNetUsers" layers="0" collapse-mode="2" max-obj-count="20" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="920" y="60"/>
+	<column name="Id" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="RegisterDate" not-null="true">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="ProfilePictureUrl" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="UserName">
+		<type name="character varying" length="256"/>
+	</column>
+	<column name="NormalizedUserName">
+		<type name="character varying" length="256"/>
+	</column>
+	<column name="Email">
+		<type name="character varying" length="256"/>
+	</column>
+	<column name="NormalizedEmail">
+		<type name="character varying" length="256"/>
+	</column>
+	<column name="EmailConfirmed" not-null="true">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="PasswordHash">
+		<type name="text" length="0"/>
+	</column>
+	<column name="SecurityStamp">
+		<type name="text" length="0"/>
+	</column>
+	<column name="ConcurrencyStamp">
+		<type name="text" length="0"/>
+	</column>
+	<column name="PhoneNumber">
+		<type name="text" length="0"/>
+	</column>
+	<column name="PhoneNumberConfirmed" not-null="true">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="TwoFactorEnabled" not-null="true">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="LockoutEnd">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="LockoutEnabled" not-null="true">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="AccessFailedCount" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="PK_AspNetUsers" type="pk-constr" table="public.&quot;AspNetUsers&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="Tags" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1440" y="60"/>
+	<column name="Id" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="Name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="Description" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="CreationDate" not-null="true">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="PK_Tags" type="pk-constr" table="public.&quot;Tags&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="AspNetRoleClaims" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1880" y="60"/>
+	<column name="Id" not-null="true"
+	 identity-type="BY DEFAULT" start="1" increment="1" min-value="1" max-value="2147483647" cache="1">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="RoleId" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="ClaimType">
+		<type name="text" length="0"/>
+	</column>
+	<column name="ClaimValue">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="PK_AspNetRoleClaims" type="pk-constr" table="public.&quot;AspNetRoleClaims&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="AspNetRoleClaims_Id_seq" cycle="false" start="1" increment="1" min-value="1" max-value="2147483647" cache="1" sql-disabled="true">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<table name="AspNetUserClaims" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="60" y="560"/>
+	<column name="Id" not-null="true"
+	 identity-type="BY DEFAULT" start="1" increment="1" min-value="1" max-value="2147483647" cache="1">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="UserId" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="ClaimType">
+		<type name="text" length="0"/>
+	</column>
+	<column name="ClaimValue">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="PK_AspNetUserClaims" type="pk-constr" table="public.&quot;AspNetUserClaims&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="AspNetUserClaims_Id_seq" cycle="false" start="1" increment="1" min-value="1" max-value="2147483647" cache="1" sql-disabled="true">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<table name="AspNetUserLogins" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="580" y="560"/>
+	<column name="LoginProvider" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="ProviderKey" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="ProviderDisplayName">
+		<type name="text" length="0"/>
+	</column>
+	<column name="UserId" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="PK_AspNetUserLogins" type="pk-constr" table="public.&quot;AspNetUserLogins&quot;">
+		<columns names="LoginProvider,ProviderKey" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="AspNetUserRoles" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1120" y="560"/>
+	<column name="UserId" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="RoleId" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="PK_AspNetUserRoles" type="pk-constr" table="public.&quot;AspNetUserRoles&quot;">
+		<columns names="UserId,RoleId" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="AspNetUserTokens" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1640" y="560"/>
+	<column name="UserId" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="LoginProvider" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="Name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="Value">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="PK_AspNetUserTokens" type="pk-constr" table="public.&quot;AspNetUserTokens&quot;">
+		<columns names="UserId,LoginProvider,Name" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="Galleries" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2180" y="560"/>
+	<column name="Id" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="Name" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="Description" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="CreationDate" not-null="true">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="UserId" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="PK_Galleries" type="pk-constr" table="public.&quot;Galleries&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="Pictures" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="60" y="860"/>
+	<column name="Id" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="Url" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="PreviewUrl" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="UploadTime" not-null="true">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="Description" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="UserId" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="PK_Pictures" type="pk-constr" table="public.&quot;Pictures&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="RefreshTokens" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="520" y="860"/>
+	<column name="Id" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="Token" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="UserId" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="PK_RefreshTokens" type="pk-constr" table="public.&quot;RefreshTokens&quot;">
+		<columns names="Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="Comments" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1020" y="860"/>
+	<column name="Id" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="PictureId" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="UserId" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="Content" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="CreationDate" not-null="true">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="PK_Comments" type="pk-constr" table="public.&quot;Comments&quot;">
+		<columns names="PictureId,UserId,Id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="PictureGalleries" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1500" y="860"/>
+	<column name="PictureId" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="GalleryId" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="PK_PictureGalleries" type="pk-constr" table="public.&quot;PictureGalleries&quot;">
+		<columns names="PictureId,GalleryId" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="PictureTags" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="2000" y="860"/>
+	<column name="PictureId" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="TagId" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="PK_PictureTags" type="pk-constr" table="public.&quot;PictureTags&quot;">
+		<columns names="PictureId,TagId" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="Scores" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="60" y="1160"/>
+	<column name="PictureId" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="UserId" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="Amount" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="CreationDate" not-null="true">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="PK_Scores" type="pk-constr" table="public.&quot;Scores&quot;">
+		<columns names="PictureId,UserId" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<index name="IX_AspNetRoleClaims_RoleId" table="public.&quot;AspNetRoleClaims&quot;"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="RoleId"/>
+		</idxelement>
+</index>
+
+<index name="RoleNameIndex" table="public.&quot;AspNetRoles&quot;"
+	 concurrent="false" unique="true" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="NormalizedName"/>
+		</idxelement>
+</index>
+
+<index name="IX_AspNetUserClaims_UserId" table="public.&quot;AspNetUserClaims&quot;"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="UserId"/>
+		</idxelement>
+</index>
+
+<index name="IX_AspNetUserLogins_UserId" table="public.&quot;AspNetUserLogins&quot;"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="UserId"/>
+		</idxelement>
+</index>
+
+<index name="IX_AspNetUserRoles_RoleId" table="public.&quot;AspNetUserRoles&quot;"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="RoleId"/>
+		</idxelement>
+</index>
+
+<index name="EmailIndex" table="public.&quot;AspNetUsers&quot;"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="NormalizedEmail"/>
+		</idxelement>
+</index>
+
+<index name="UserNameIndex" table="public.&quot;AspNetUsers&quot;"
+	 concurrent="false" unique="true" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="NormalizedUserName"/>
+		</idxelement>
+</index>
+
+<index name="IX_Comments_UserId" table="public.&quot;Comments&quot;"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="UserId"/>
+		</idxelement>
+</index>
+
+<index name="IX_Galleries_UserId" table="public.&quot;Galleries&quot;"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="UserId"/>
+		</idxelement>
+</index>
+
+<index name="IX_PictureGalleries_GalleryId" table="public.&quot;PictureGalleries&quot;"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="GalleryId"/>
+		</idxelement>
+</index>
+
+<index name="IX_Pictures_UserId" table="public.&quot;Pictures&quot;"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="UserId"/>
+		</idxelement>
+</index>
+
+<index name="IX_PictureTags_TagId" table="public.&quot;PictureTags&quot;"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="TagId"/>
+		</idxelement>
+</index>
+
+<index name="IX_RefreshTokens_UserId" table="public.&quot;RefreshTokens&quot;"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="UserId"/>
+		</idxelement>
+</index>
+
+<index name="IX_Scores_UserId" table="public.&quot;Scores&quot;"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="90">
+		<idxelement use-sorting="false">
+			<column name="UserId"/>
+		</idxelement>
+</index>
+
+<constraint name="FK_AspNetRoleClaims_AspNetRoles_RoleId" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.&quot;AspNetRoles&quot;" table="public.&quot;AspNetRoleClaims&quot;">
+	<columns names="RoleId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_AspNetUserClaims_AspNetUsers_UserId" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.&quot;AspNetUsers&quot;" table="public.&quot;AspNetUserClaims&quot;">
+	<columns names="UserId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_AspNetUserLogins_AspNetUsers_UserId" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.&quot;AspNetUsers&quot;" table="public.&quot;AspNetUserLogins&quot;">
+	<columns names="UserId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_AspNetUserRoles_AspNetRoles_RoleId" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.&quot;AspNetRoles&quot;" table="public.&quot;AspNetUserRoles&quot;">
+	<columns names="RoleId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_AspNetUserRoles_AspNetUsers_UserId" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.&quot;AspNetUsers&quot;" table="public.&quot;AspNetUserRoles&quot;">
+	<columns names="UserId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_AspNetUserTokens_AspNetUsers_UserId" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.&quot;AspNetUsers&quot;" table="public.&quot;AspNetUserTokens&quot;">
+	<columns names="UserId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_Galleries_AspNetUsers_UserId" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.&quot;AspNetUsers&quot;" table="public.&quot;Galleries&quot;">
+	<columns names="UserId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_Pictures_AspNetUsers_UserId" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.&quot;AspNetUsers&quot;" table="public.&quot;Pictures&quot;">
+	<columns names="UserId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_RefreshTokens_AspNetUsers_UserId" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.&quot;AspNetUsers&quot;" table="public.&quot;RefreshTokens&quot;">
+	<columns names="UserId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_Comments_AspNetUsers_UserId" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.&quot;AspNetUsers&quot;" table="public.&quot;Comments&quot;">
+	<columns names="UserId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_Comments_Pictures_PictureId" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.&quot;Pictures&quot;" table="public.&quot;Comments&quot;">
+	<columns names="PictureId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_PictureGalleries_Galleries_GalleryId" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.&quot;Galleries&quot;" table="public.&quot;PictureGalleries&quot;">
+	<columns names="GalleryId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_PictureGalleries_Pictures_PictureId" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.&quot;Pictures&quot;" table="public.&quot;PictureGalleries&quot;">
+	<columns names="PictureId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_PictureTags_Pictures_PictureId" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.&quot;Pictures&quot;" table="public.&quot;PictureTags&quot;">
+	<columns names="PictureId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_PictureTags_Tags_TagId" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.&quot;Tags&quot;" table="public.&quot;PictureTags&quot;">
+	<columns names="TagId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_Scores_AspNetUsers_UserId" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.&quot;AspNetUsers&quot;" table="public.&quot;Scores&quot;">
+	<columns names="UserId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="FK_Scores_Pictures_PictureId" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="CASCADE" ref-table="public.&quot;Pictures&quot;" table="public.&quot;Scores&quot;">
+	<columns names="PictureId" ref-type="src-columns"/>
+	<columns names="Id" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="&quot;rel_AspNetRoleClaims_AspNetRoles&quot;" type="relfk" layers="0"
+	 custom-color="#9158df"
+	 src-table="public.&quot;AspNetRoleClaims&quot;"
+	 dst-table="public.&quot;AspNetRoles&quot;" reference-fk="FK_AspNetRoleClaims_AspNetRoles_RoleId"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_AspNetUserClaims_AspNetUsers&quot;" type="relfk" layers="0"
+	 custom-color="#4a2017"
+	 src-table="public.&quot;AspNetUserClaims&quot;"
+	 dst-table="public.&quot;AspNetUsers&quot;" reference-fk="FK_AspNetUserClaims_AspNetUsers_UserId"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_AspNetUserLogins_AspNetUsers&quot;" type="relfk" layers="0"
+	 custom-color="#bc504d"
+	 src-table="public.&quot;AspNetUserLogins&quot;"
+	 dst-table="public.&quot;AspNetUsers&quot;" reference-fk="FK_AspNetUserLogins_AspNetUsers_UserId"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_AspNetUserRoles_AspNetRoles&quot;" type="relfk" layers="0"
+	 custom-color="#4eb6ff"
+	 src-table="public.&quot;AspNetUserRoles&quot;"
+	 dst-table="public.&quot;AspNetRoles&quot;" reference-fk="FK_AspNetUserRoles_AspNetRoles_RoleId"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_AspNetUserRoles_AspNetUsers&quot;" type="relfk" layers="0"
+	 custom-color="#b4f588"
+	 src-table="public.&quot;AspNetUserRoles&quot;"
+	 dst-table="public.&quot;AspNetUsers&quot;" reference-fk="FK_AspNetUserRoles_AspNetUsers_UserId"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_AspNetUserTokens_AspNetUsers&quot;" type="relfk" layers="0"
+	 custom-color="#01de7c"
+	 src-table="public.&quot;AspNetUserTokens&quot;"
+	 dst-table="public.&quot;AspNetUsers&quot;" reference-fk="FK_AspNetUserTokens_AspNetUsers_UserId"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_Galleries_AspNetUsers&quot;" type="relfk" layers="0"
+	 custom-color="#2f4d4c"
+	 src-table="public.&quot;Galleries&quot;"
+	 dst-table="public.&quot;AspNetUsers&quot;" reference-fk="FK_Galleries_AspNetUsers_UserId"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_Pictures_AspNetUsers&quot;" type="relfk" layers="0"
+	 custom-color="#d50119"
+	 src-table="public.&quot;Pictures&quot;"
+	 dst-table="public.&quot;AspNetUsers&quot;" reference-fk="FK_Pictures_AspNetUsers_UserId"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_RefreshTokens_AspNetUsers&quot;" type="relfk" layers="0"
+	 custom-color="#17557f"
+	 src-table="public.&quot;RefreshTokens&quot;"
+	 dst-table="public.&quot;AspNetUsers&quot;" reference-fk="FK_RefreshTokens_AspNetUsers_UserId"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_Comments_AspNetUsers&quot;" type="relfk" layers="0"
+	 custom-color="#9e22fa"
+	 src-table="public.&quot;Comments&quot;"
+	 dst-table="public.&quot;AspNetUsers&quot;" reference-fk="FK_Comments_AspNetUsers_UserId"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_Comments_Pictures&quot;" type="relfk" layers="0"
+	 custom-color="#9abb79"
+	 src-table="public.&quot;Comments&quot;"
+	 dst-table="public.&quot;Pictures&quot;" reference-fk="FK_Comments_Pictures_PictureId"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_PictureGalleries_Galleries&quot;" type="relfk" layers="0"
+	 custom-color="#2e360d"
+	 src-table="public.&quot;PictureGalleries&quot;"
+	 dst-table="public.&quot;Galleries&quot;" reference-fk="FK_PictureGalleries_Galleries_GalleryId"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_PictureGalleries_Pictures&quot;" type="relfk" layers="0"
+	 custom-color="#30ad98"
+	 src-table="public.&quot;PictureGalleries&quot;"
+	 dst-table="public.&quot;Pictures&quot;" reference-fk="FK_PictureGalleries_Pictures_PictureId"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_PictureTags_Pictures&quot;" type="relfk" layers="0"
+	 custom-color="#9d7516"
+	 src-table="public.&quot;PictureTags&quot;"
+	 dst-table="public.&quot;Pictures&quot;" reference-fk="FK_PictureTags_Pictures_PictureId"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_PictureTags_Tags&quot;" type="relfk" layers="0"
+	 custom-color="#1cb660"
+	 src-table="public.&quot;PictureTags&quot;"
+	 dst-table="public.&quot;Tags&quot;" reference-fk="FK_PictureTags_Tags_TagId"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_Scores_AspNetUsers&quot;" type="relfk" layers="0"
+	 custom-color="#24a932"
+	 src-table="public.&quot;Scores&quot;"
+	 dst-table="public.&quot;AspNetUsers&quot;" reference-fk="FK_Scores_AspNetUsers_UserId"
+	 src-required="false" dst-required="true"/>
+
+<relationship name="&quot;rel_Scores_Pictures&quot;" type="relfk" layers="0"
+	 custom-color="#dbd68e"
+	 src-table="public.&quot;Scores&quot;"
+	 dst-table="public.&quot;Pictures&quot;" reference-fk="FK_Scores_Pictures_PictureId"
+	 src-required="false" dst-required="true"/>
+
+<permission>
+	<object name="public" type="schema"/>
+	<roles names="pg_database_owner"/>
+	<privileges create="true" usage="true"/>
+</permission>
+<permission>
+	<object name="public" type="schema"/>
+	<privileges usage="true"/>
+</permission>
+</dbmodel>
