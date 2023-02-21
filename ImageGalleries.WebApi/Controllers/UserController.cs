@@ -98,7 +98,7 @@ namespace ImageGalleries.WebApi.Controllers
         public async Task<IActionResult> ChangeProfilePicture([FromForm] ChangeProfilePictureRequest changeProfilePictureRequest)
         {
             var userId = HttpContext.User.FindFirstValue("UserId") ?? string.Empty;
-            var user = await _userRepository.GetUser(userId);
+            var user = await _userRepository.GetUserTracking(userId);
             if (user == null)
             {
                 return Unauthorized();
@@ -126,7 +126,7 @@ namespace ImageGalleries.WebApi.Controllers
         public async Task<IActionResult> ChangeUsername([FromBody] ChangeUsernameRequest changeUsernameRequest)
         {
             var userId = HttpContext.User.FindFirstValue("UserId") ?? string.Empty;
-            var user = await _userRepository.GetUser(userId);
+            var user = await _userRepository.GetUserTracking(userId);
             if (user == null)
             {
                 return Unauthorized();
@@ -178,7 +178,7 @@ namespace ImageGalleries.WebApi.Controllers
 
             var commentId = request.CommentId;
 
-            var comment = await _userRepository.GetComment(commentId);
+            var comment = await _userRepository.GetCommentTracking(commentId);
             if (comment == null) 
             {
                 return BadRequest("Comment doesn't exist");
@@ -210,7 +210,7 @@ namespace ImageGalleries.WebApi.Controllers
                 return Unauthorized();
             }
 
-            var score = await _userRepository.GetScore(userId, addScoreRequest.PictureId);
+            var score = await _userRepository.GetScoreTracking(userId, addScoreRequest.PictureId);
             if (score != null)
             {
                 await _userRepository.RemoveScoreFromPicture(score);

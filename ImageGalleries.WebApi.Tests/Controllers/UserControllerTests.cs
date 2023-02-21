@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FakeItEasy;
 using ImageGalleries.WebApi.Controllers;
 using ImageGalleries.WebApi.Models;
 using ImageGalleries.WebApi.Repositories.Users;
@@ -56,7 +55,7 @@ namespace ImageGalleries.WebApi.Tests.Controllers
                 ProfilePicture = _testPictureGenerator.GetPicture()
             };
             var profilePicture = changeProfilePictureRequest.ProfilePicture;
-            A.CallTo(() => _userRepository.GetUser(userId)).Returns(user);
+            A.CallTo(() => _userRepository.GetUserTracking(userId)).Returns(user);
             A.CallTo(() => _userRepository.UpdateProfilePicture(user, profilePicture)).Returns(true);
 
             var result = await _userController.ChangeProfilePicture(changeProfilePictureRequest);
@@ -77,7 +76,7 @@ namespace ImageGalleries.WebApi.Tests.Controllers
                 NewUsername = "new-username"
             };
             var newUsername = changeUsernameRequest.NewUsername;
-            A.CallTo(() => _userRepository.GetUser(userId)).Returns(user);
+            A.CallTo(() => _userRepository.GetUserTracking(userId)).Returns(user);
             A.CallTo(() => _userRepository.UpdateUsername(user, newUsername)).Returns(true);
 
             var result = await _userController.ChangeUsername(changeUsernameRequest);
@@ -124,7 +123,7 @@ namespace ImageGalleries.WebApi.Tests.Controllers
             };
             var commentId = removeCommentRequest.CommentId;
             A.CallTo(() => _userRepository.GetUser(userId)).Returns(user);
-            A.CallTo(() => _userRepository.GetComment(commentId)).Returns(comment);
+            A.CallTo(() => _userRepository.GetCommentTracking(commentId)).Returns(comment);
             A.CallTo(() => _userRepository.RemoveComment(comment)).Returns(true);
 
             var result = await _userController.RemoveComment(removeCommentRequest);
@@ -147,7 +146,7 @@ namespace ImageGalleries.WebApi.Tests.Controllers
                 IsUpvote = true
             };
             A.CallTo(() => _userRepository.GetUser(userId)).Returns(user);
-            A.CallTo(() => _userRepository.GetScore(userId, addScoreRequest.PictureId)).Returns(score);
+            A.CallTo(() => _userRepository.GetScoreTracking(userId, addScoreRequest.PictureId)).Returns(score);
             A.CallTo(() => _userRepository.AddScoreToPicture(userId,
                 addScoreRequest.PictureId,
                 addScoreRequest.IsUpvote ? 1 : -1)).Returns(true);

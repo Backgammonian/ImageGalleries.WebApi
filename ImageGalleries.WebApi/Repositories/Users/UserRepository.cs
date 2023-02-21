@@ -80,6 +80,7 @@ namespace ImageGalleries.WebApi.Repositories.Users
         public async Task<bool> DoesUserExist(string userId)
         {
             return await _dataContext.Users
+                .AsNoTracking()
                 .AnyAsync(x => x.Id == userId);
         }
 
@@ -87,6 +88,12 @@ namespace ImageGalleries.WebApi.Repositories.Users
         {
             return await _dataContext.Users
                 .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == userId);
+        }
+
+        public async Task<User?> GetUserTracking(string userId)
+        {
+            return await _dataContext.Users
                 .FirstOrDefaultAsync(x => x.Id == userId);
         }
 
@@ -116,6 +123,7 @@ namespace ImageGalleries.WebApi.Repositories.Users
         public async Task<bool> AddCommentToPicture(string userId, string pictureId, string content)
         {
             var any = await _dataContext.Pictures
+                .AsNoTracking()
                 .AnyAsync(x => x.Id == pictureId);
 
             if (!any)
@@ -144,16 +152,16 @@ namespace ImageGalleries.WebApi.Repositories.Users
             return await Save();
         }
 
-        public async Task<Comment?> GetComment(string commentId)
+        public async Task<Comment?> GetCommentTracking(string commentId)
         {
             return await _dataContext.Comments
-                .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == commentId);
         }
 
         public async Task<bool> AddScoreToPicture(string userId, string pictureId, int amount)
         {
             var any = await _dataContext.Pictures
+                .AsNoTracking()
                 .AnyAsync(x => x.Id == pictureId);
 
             if (!any)
@@ -189,13 +197,12 @@ namespace ImageGalleries.WebApi.Repositories.Users
                     x.PictureId == pictureId);
         }
 
-        public async Task<Score?> GetScore(string userId, string pictureId)
+        public async Task<Score?> GetScoreTracking(string userId, string pictureId)
         {
             var doesScoreExist = await DoesScoreExist(userId, pictureId);
             if (doesScoreExist)
             {
                 return await _dataContext.Scores
-                    .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.UserId == userId &&
                         x.PictureId == pictureId);
             }

@@ -141,7 +141,7 @@ namespace ImageGalleries.WebApi.Tests.Controllers
             var newName = updateGalleryRequest.NewName;
             var newDescription = updateGalleryRequest.NewDescription;
             A.CallTo(() => _userRepository.GetUser(userId)).Returns(user);
-            A.CallTo(() => _galleryRepository.GetGallery(galleryId)).Returns(gallery);
+            A.CallTo(() => _galleryRepository.GetGalleryTracking(galleryId)).Returns(gallery);
             A.CallTo(() => _galleryRepository.UpdateGalleryNameAndDescription(gallery, newName, newDescription)).Returns(true);
 
             var result = await _galleryController.UpdateGalleryNameAndDescription(updateGalleryRequest);
@@ -165,7 +165,7 @@ namespace ImageGalleries.WebApi.Tests.Controllers
             var gallery = A.Fake<Gallery>();
             gallery.UserId = userId;
             A.CallTo(() => _userRepository.GetUser(userId)).Returns(user);
-            A.CallTo(() => _galleryRepository.GetGallery(galleryId)).Returns(gallery);
+            A.CallTo(() => _galleryRepository.GetGalleryTracking(galleryId)).Returns(gallery);
             A.CallTo(() => _galleryRepository.RemoveGallery(gallery)).Returns(true);
 
             var result = await _galleryController.RemoveGallery(removeGalleryRequest);

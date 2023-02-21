@@ -38,6 +38,12 @@ namespace ImageGalleries.WebApi.Repositories.Galleries
                 .FirstOrDefaultAsync(x => x.Id == galleryId);
         }
 
+        public async Task<Gallery?> GetGalleryTracking(string galleryId)
+        {
+            return await _dataContext.Galleries
+                .FirstOrDefaultAsync(x => x.Id == galleryId);
+        }
+
         public async Task<User?> GetGalleryOwner(string galleryId)
         {
             var gallery = await GetGallery(galleryId);
@@ -99,7 +105,9 @@ namespace ImageGalleries.WebApi.Repositories.Galleries
         public async Task<bool> AddPictureToGallery(Gallery gallery, string pictureId)
         {
             var any = await _dataContext.PictureGalleries
-                .AnyAsync(x => x.GalleryId == gallery.Id && x.PictureId == pictureId);
+                .AsNoTracking()
+                .AnyAsync(x => x.GalleryId == gallery.Id 
+                    && x.PictureId == pictureId);
 
             if (any)
             {
@@ -119,19 +127,14 @@ namespace ImageGalleries.WebApi.Repositories.Galleries
 
         public async Task<bool> RemovePictureFromGallery(Gallery gallery, string pictureId)
         {
-            var any = await _dataContext.PictureGalleries
-                .AnyAsync(x => x.GalleryId == gallery.Id && x.PictureId == pictureId);
+            var pictureGallery = await _dataContext.PictureGalleries
+                .FirstOrDefaultAsync(x => x.GalleryId == gallery.Id 
+                    && x.PictureId == pictureId);
 
-            if (!any)
+            if (pictureGallery == null)
             {
                 return false;
             }
-
-            var pictureGallery = new PictureGallery()
-            {
-                PictureId = pictureId,
-                GalleryId = gallery.Id
-            };
 
             _dataContext.PictureGalleries.Remove(pictureGallery);
 

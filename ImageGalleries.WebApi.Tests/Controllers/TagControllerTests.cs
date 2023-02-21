@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FakeItEasy;
 using ImageGalleries.WebApi.Controllers;
 using ImageGalleries.WebApi.Models;
 using ImageGalleries.WebApi.Repositories.Pictures;
@@ -88,7 +87,7 @@ namespace ImageGalleries.WebApi.Tests.Controllers
                 TagName = "name"
             };
             var tagName = removeTagRequest.TagName;
-            A.CallTo(() => _tagRepository.GetTag(tagName)).Returns(tag);
+            A.CallTo(() => _tagRepository.GetTagTracking(tagName)).Returns(tag);
             A.CallTo(() => _tagRepository.RemoveTag(tag)).Returns(true);
 
             var result = await _tagController.RemoveTag(removeTagRequest);
@@ -109,7 +108,7 @@ namespace ImageGalleries.WebApi.Tests.Controllers
                 NewTagName = "new-name",
                 NewTagDescription = "new-description"
             };
-            A.CallTo(() => _tagRepository.GetTag(updateTagRequest.TagName)).Returns(tag);
+            A.CallTo(() => _tagRepository.GetTagTracking(updateTagRequest.TagName)).Returns(tag);
             A.CallTo(() => _tagRepository.UpdateTag(tag,
                 updateTagRequest.NewTagName,
                 updateTagRequest.NewTagDescription)).Returns(true);

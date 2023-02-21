@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FakeItEasy;
 using ImageGalleries.WebApi.Controllers;
 using ImageGalleries.WebApi.Models;
 using ImageGalleries.WebApi.Repositories.Pictures;
@@ -86,7 +85,7 @@ namespace ImageGalleries.WebApi.Tests.Controllers
             };
             var pictureId = removePictureRequest.PictureId;
             A.CallTo(() => _userRepository.GetUser(userId)).Returns(user);
-            A.CallTo(() => _pictureRepository.GetPicture(pictureId)).Returns(picture);
+            A.CallTo(() => _pictureRepository.GetPictureTracking(pictureId)).Returns(picture);
             A.CallTo(() => _pictureRepository.RemovePicture(picture)).Returns(true);
 
             var result = await _pictureController.RemovePicture(removePictureRequest);
@@ -112,7 +111,7 @@ namespace ImageGalleries.WebApi.Tests.Controllers
             var pictureId = updatePictureRequest.PictureId;
             var description = updatePictureRequest.Description;
             A.CallTo(() => _userRepository.GetUser(userId)).Returns(user);
-            A.CallTo(() => _pictureRepository.GetPicture(pictureId)).Returns(picture);
+            A.CallTo(() => _pictureRepository.GetPictureTracking(pictureId)).Returns(picture);
             A.CallTo(() => _pictureRepository.UpdatePictureDescription(picture, description)).Returns(true);
 
             var result = await _pictureController.UpdatePictureDescription(updatePictureRequest);

@@ -1,7 +1,5 @@
 ﻿using CloudinaryDotNet.Actions;
-using FakeItEasy;
 using ImageGalleries.WebApi.Models;
-using ImageGalleries.WebApi.Repositories.Galleries;
 using ImageGalleries.WebApi.Repositories.Pictures;
 using ImageGalleries.WebApi.Services.PhotoServices;
 using ImageGalleries.WebApi.Services.RandomGenerators;
@@ -68,41 +66,50 @@ namespace ImageGalleries.WebApi.Tests.Repositories
             previewPhotoResult.Url = new Uri("preview-picture.jpg", UriKind.Relative);
             A.CallTo(() => _photoService.AddPhoto(formFile)).Returns(photoResult);
             A.CallTo(() => _photoService.AddPreviewPhoto(formFile)).Returns(previewPhotoResult);
+            var oldCount = (await _repo.GetPictures()).Count;
 
-            var result = await _repo.AddPicture(formFile, userId, description);
+            var result = await _repo.AddPicture(formFile, userId, description); 
+            var newCount = (await _repo.GetPictures()).Count;
 
             result.Should().BeTrue();
+            newCount.Should().Be(oldCount + 1);
         }
 
         [Fact]
         public async Task PictureRepository_RemovePicture_ReturnsSuccess()
         {
-            var dbContext = await _dbGenerator.GetDatabase();
-            _repo = new PictureRepository(dbContext, _photoService, _randomGenerator);
-            var picture = await _repo.GetPicture("1");
-            dbContext.ChangeTracker.Clear();
+            _repo = new PictureRepository(await _dbGenerator.GetDatabase(),
+                _photoService,
+                _randomGenerator);
+            var picture = await _repo.GetPictureTracking("1");
             var photoResult = A.Fake<DeletionResult>();
             var previewPhotoResult = A.Fake<DeletionResult>();
             A.CallTo(() => _photoService.DeletePhoto(picture.Url)).Returns(photoResult);
             A.CallTo(() => _photoService.DeletePhoto(picture.PreviewUrl)).Returns(previewPhotoResult);
+            var oldCount = (await _repo.GetPictures()).Count;
 
             var result = await _repo.RemovePicture(picture);
+            var newCount = (await _repo.GetPictures()).Count;
 
             result.Should().BeTrue();
+            newCount.Should().Be(oldCount - 1);
         }
 
         [Fact]
         public async Task PictureRepository_UpdatePictureDescription_ReturnsSuccess()
         {
-            var dbContext = await _dbGenerator.GetDatabase();
-            _repo = new PictureRepository(dbContext, _photoService, _randomGenerator);
+            _repo = new PictureRepository(await _dbGenerator.GetDatabase(),
+                _photoService,
+                _randomGenerator);
             var newDescription = "new-description";
-            var picture = await _repo.GetPicture("1");
-            dbContext.ChangeTracker.Clear();
+            var pictureId = "1";
+            var picture = await _repo.GetPictureTracking(pictureId);
 
             var result = await _repo.UpdatePictureDescription(picture, newDescription);
+            var changedEntity = await _repo.GetPicture(pictureId);
 
             result.Should().BeTrue();
+            changedEntity.Description.Should().Be(newDescription);
         }
     }
 }

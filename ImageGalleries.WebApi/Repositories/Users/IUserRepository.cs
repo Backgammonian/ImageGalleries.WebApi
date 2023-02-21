@@ -10,15 +10,16 @@ namespace ImageGalleries.WebApi.Repositories.Users
         Task<ICollection<Comment>?> GetCommentsOfUser(string userId);
         Task<bool> DoesUserExist(string userId);
         Task<User?> GetUser(string userId);
+        Task<User?> GetUserTracking(string userId);
         Task<bool> UpdateUsername(User user, string newUsername);
         Task<bool> UpdateProfilePicture(User user, IFormFile formFile);
         Task<bool> AddCommentToPicture(string userId, string pictureId, string content);
         Task<bool> RemoveComment(Comment comment);
-        Task<Comment?> GetComment(string commentId);
+        Task<Comment?> GetCommentTracking(string commentId);
         Task<bool> AddScoreToPicture(string userId, string pictureId, int amount);
         Task<bool> RemoveScoreFromPicture(Score score);
         Task<bool> DoesScoreExist(string userId, string pictureId);
-        Task<Score?> GetScore(string userId, string pictureId);
+        Task<Score?> GetScoreTracking(string userId, string pictureId);
         Task<bool> Save();
     }
 }

@@ -48,6 +48,12 @@ namespace ImageGalleries.WebApi.Repositories.Pictures
                 .FirstOrDefaultAsync(x => x.Id == pictureId);
         }
 
+        public async Task<Picture?> GetPictureTracking(string pictureId)
+        {
+            return await _dataContext.Pictures
+                .FirstOrDefaultAsync(x => x.Id == pictureId);
+        }
+
         public async Task<ICollection<Comment>?> GetCommentsOfPicture(string pictureId)
         {
             var picture = await GetPicture(pictureId);
