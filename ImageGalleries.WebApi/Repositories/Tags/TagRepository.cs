@@ -38,6 +38,12 @@ namespace ImageGalleries.WebApi.Repositories.Tags
                 .FirstOrDefaultAsync(x => x.Name == tagName);
         }
 
+        public async Task<Tag?> GetTagTracking(string tagName)
+        {
+            return await _dataContext.Tags
+                .FirstOrDefaultAsync(x => x.Name == tagName);
+        }
+
         public async Task<ICollection<Picture>?> GetPicturesByTag(string tagName)
         {
             var tag = await GetTag(tagName);
@@ -91,6 +97,7 @@ namespace ImageGalleries.WebApi.Repositories.Tags
         public async Task<bool> AddTagToPicture(Tag tag, Picture picture)
         {
             var any = await _dataContext.PictureTags
+                .AsNoTracking()
                 .AnyAsync(x => x.TagId == tag.Id &&
                     x.PictureId == picture.Id);
 
@@ -112,20 +119,14 @@ namespace ImageGalleries.WebApi.Repositories.Tags
 
         public async Task<bool> RemoveTagFromPicture(Tag tag, Picture picture)
         {
-            var any = await _dataContext.PictureTags
-                .AnyAsync(x => x.TagId == tag.Id &&
+            var pictureTag = await _dataContext.PictureTags
+                .FirstOrDefaultAsync(x => x.TagId == tag.Id &&
                     x.PictureId == picture.Id);
 
-            if (!any)
+            if (pictureTag == null)
             {
                 return false;
             }
-
-            var pictureTag = new PictureTag()
-            {
-                PictureId = picture.Id,
-                TagId = tag.Id
-            };
 
             _dataContext.PictureTags.Remove(pictureTag);
 

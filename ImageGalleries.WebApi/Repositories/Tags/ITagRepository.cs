@@ -7,6 +7,7 @@ namespace ImageGalleries.WebApi.Repositories.Tags
         Task<ICollection<Tag>> GetTags();
         Task<bool> DoesTagExist(string tagName);
         Task<Tag?> GetTag(string tagName);
+        Task<Tag?> GetTagTracking(string tagName);
         Task<ICollection<Picture>?> GetPicturesByTag(string tagName);
         Task<bool> CreateTag(string name, string description = "");
         Task<bool> AddTagToPicture(Tag tag, Picture picture);

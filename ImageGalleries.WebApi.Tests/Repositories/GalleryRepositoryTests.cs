@@ -38,10 +38,13 @@ namespace ImageGalleries.WebApi.Tests.Repositories
             var userId = "user1";
             var galleryName = "name";
             var galleryDescription = "description";
+            var oldCount = (await _repo.GetGalleries()).Count;
 
             var result = await _repo.CreateGallery(userId, galleryName, galleryDescription);
+            var newCount = (await _repo.GetGalleries()).Count;
 
             result.Should().BeTrue();
+            newCount.Should().Be(oldCount + 1);
         } 
         
         [Fact]
@@ -60,11 +63,10 @@ namespace ImageGalleries.WebApi.Tests.Repositories
         [Fact]
         public async Task GalleryRepository_RemovePictureFromGallery_ReturnsSuccess()
         {
-            var dbContext = await _dbGenerator.GetDatabase();
-            _repo = new GalleryRepository(dbContext, _randomGenerator);
+            _repo = new GalleryRepository(await _dbGenerator.GetDatabase(),
+                _randomGenerator);
             var pictureId = "1";
             var gallery = await _repo.GetGallery("1");
-            dbContext.ChangeTracker.Clear();
 
             var result = await _repo.RemovePictureFromGallery(gallery, pictureId);
 
@@ -74,29 +76,34 @@ namespace ImageGalleries.WebApi.Tests.Repositories
         [Fact]
         public async Task GalleryRepository_UpdateGalleryNameAndDescription_ReturnsSuccess()
         {
-            var dbContext = await _dbGenerator.GetDatabase();
-            _repo = new GalleryRepository(dbContext, _randomGenerator);
+            _repo = new GalleryRepository(await _dbGenerator.GetDatabase(),
+                _randomGenerator);
             var newName = "new-name";
             var newDescription = "new-description";
-            var gallery = await _repo.GetGallery("1");
-            dbContext.ChangeTracker.Clear();
+            var galleryId = "1";
+            var gallery = await _repo.GetGalleryTracking(galleryId);
 
             var result = await _repo.UpdateGalleryNameAndDescription(gallery, newName, newDescription);
+            var changedEntity = await _repo.GetGallery(galleryId);
 
             result.Should().BeTrue();
+            changedEntity.Name.Should().Be(newName);
+            changedEntity.Description.Should().Be(newDescription);
         }
 
         [Fact]
         public async Task GalleryRepository_RemoveGallery_ReturnsSuccess()
         {
-            var dbContext = await _dbGenerator.GetDatabase();
-            _repo = new GalleryRepository(dbContext, _randomGenerator);
-            var gallery = await _repo.GetGallery("1");
-            dbContext.ChangeTracker.Clear();
+            _repo = new GalleryRepository(await _dbGenerator.GetDatabase(),
+                _randomGenerator);
+            var gallery = await _repo.GetGalleryTracking("1");
+            var oldCount = (await _repo.GetGalleries()).Count;
 
             var result = await _repo.RemoveGallery(gallery);
+            var newCount = (await _repo.GetGalleries()).Count;
 
             result.Should().BeTrue();
+            newCount.Should().Be(oldCount - 1);
         }
     }
 }

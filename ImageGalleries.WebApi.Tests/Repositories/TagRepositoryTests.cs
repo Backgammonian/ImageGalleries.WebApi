@@ -1,5 +1,4 @@
 ﻿using ImageGalleries.WebApi.Models;
-using ImageGalleries.WebApi.Repositories.Galleries;
 using ImageGalleries.WebApi.Repositories.Tags;
 using ImageGalleries.WebApi.Services.RandomGenerators;
 using Microsoft.EntityFrameworkCore;
@@ -39,10 +38,13 @@ namespace ImageGalleries.WebApi.Tests.Repositories
                 _randomGenerator);
             var tagName = "New Tag";
             var tagDescription = "Description";
+            var oldCount = (await _repo.GetTags()).Count;
 
             var result = await _repo.CreateTag(tagName, tagDescription);
+            var newCount = (await _repo.GetTags()).Count;
 
             result.Should().BeTrue();
+            newCount.Should().Be(oldCount + 1);
         }
 
         [Fact]
@@ -50,7 +52,9 @@ namespace ImageGalleries.WebApi.Tests.Repositories
         {
             var dataContext = await _dbGenerator.GetDatabase();
             _repo = new TagRepository(dataContext, _randomGenerator);
-            var picture = await dataContext.Pictures.AsNoTracking().FirstOrDefaultAsync(x => x.Id == "4");
+            var picture = await dataContext.Pictures
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == "4");
             var tag = await _repo.GetTag("Tag 1");
 
             var result = await _repo.AddTagToPicture(tag, picture);
@@ -59,13 +63,14 @@ namespace ImageGalleries.WebApi.Tests.Repositories
         }
 
         [Fact]
-        public async Task TagRepository_RemoveTagToPicture_ReturnsSuccess()
+        public async Task TagRepository_RemoveTagFromPicture_ReturnsSuccess()
         {
             var dataContext = await _dbGenerator.GetDatabase();
             _repo = new TagRepository(dataContext, _randomGenerator);
-            var picture = await dataContext.Pictures.AsNoTracking().FirstOrDefaultAsync(x => x.Id == "1");
+            var picture = await dataContext.Pictures
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == "1");
             var tag = await _repo.GetTag("Tag 1");
-            dataContext.ChangeTracker.Clear();
 
             var result = await _repo.RemoveTagFromPicture(tag, picture);
 
@@ -75,29 +80,37 @@ namespace ImageGalleries.WebApi.Tests.Repositories
         [Fact]
         public async Task TagRepository_UpdateTag_ReturnsSuccess()
         {
-            var dbContext = await _dbGenerator.GetDatabase();
-            _repo = new TagRepository(dbContext, _randomGenerator);
+            _repo = new TagRepository(await _dbGenerator.GetDatabase(),
+                _randomGenerator);
             var newName = "new-name";
             var newDescription = "new-description";
-            var tag = await _repo.GetTag("Tag 1");
-            dbContext.ChangeTracker.Clear();
+            var tagName = "Tag 1";
+            var tag = await _repo.GetTagTracking(tagName);
 
             var result = await _repo.UpdateTag(tag, newName, newDescription);
+            var changedEntity = await _repo.GetTag(tagName);
+            var realChangedEntity = await _repo.GetTag(newName);
 
             result.Should().BeTrue();
+            changedEntity.Should().BeNull();
+            realChangedEntity.Should().NotBeNull();
+            realChangedEntity.Name.Should().Be(newName);
+            realChangedEntity.Description.Should().Be(newDescription);
         }
 
         [Fact]
         public async Task TagRepository_RemoveTag_ReturnsSuccess()
         {
-            var dbContext = await _dbGenerator.GetDatabase();
-            _repo = new TagRepository(dbContext, _randomGenerator);
-            var tag = await _repo.GetTag("Tag 1");
-            dbContext.ChangeTracker.Clear();
+            _repo = new TagRepository(await _dbGenerator.GetDatabase(),
+                _randomGenerator);
+            var tag = await _repo.GetTagTracking("Tag 1");
+            var oldCount = (await _repo.GetTags()).Count;
 
             var result = await _repo.RemoveTag(tag);
+            var newCount = (await _repo.GetTags()).Count;
 
             result.Should().BeTrue();
+            newCount.Should().Be(oldCount - 1);
         }
     }
 }

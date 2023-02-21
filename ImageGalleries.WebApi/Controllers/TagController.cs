@@ -90,7 +90,7 @@ namespace ImageGalleries.WebApi.Controllers
         {
             var tagName = request.TagName;
 
-            var tag = await _tagRepository.GetTag(tagName);
+            var tag = await _tagRepository.GetTagTracking(tagName);
             if (tag == null)
             {
                 return BadRequest("Tag doesn't exist");
@@ -109,7 +109,7 @@ namespace ImageGalleries.WebApi.Controllers
         [HttpPut("update")]
         public async Task<IActionResult> UpdateTag([FromBody] UpdateTagRequest updateTagRequest)
         {
-            var tag = await _tagRepository.GetTag(updateTagRequest.TagName);
+            var tag = await _tagRepository.GetTagTracking(updateTagRequest.TagName);
             if (tag == null)
             {
                 return BadRequest("Tag doesn't exist");

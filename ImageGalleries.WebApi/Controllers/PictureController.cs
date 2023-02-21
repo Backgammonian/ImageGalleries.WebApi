@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using ImageGalleries.WebApi.Data;
 using ImageGalleries.WebApi.DTOs;
-using ImageGalleries.WebApi.Models;
 using ImageGalleries.WebApi.Repositories.Pictures;
 using ImageGalleries.WebApi.Repositories.Users;
 using ImageGalleries.WebApi.Requests;
@@ -126,16 +125,16 @@ namespace ImageGalleries.WebApi.Controllers
                 return Unauthorized();
             }
 
-            var picture = addPictureRequest.Picture;
+            var file = addPictureRequest.Picture;
             var description = addPictureRequest.PictureDescription;
 
-            if (picture == null ||
-                picture.Length == 0)
+            if (file == null ||
+                file.Length == 0)
             {
                 return BadRequest("No picture!");
             }
 
-            var added = await _pictureRepository.AddPicture(picture,
+            var added = await _pictureRepository.AddPicture(file,
                 userId,
                 description);
 
@@ -160,7 +159,7 @@ namespace ImageGalleries.WebApi.Controllers
 
             var pictureId = request.PictureId;
 
-            var picture = await _pictureRepository.GetPicture(pictureId);
+            var picture = await _pictureRepository.GetPictureTracking(pictureId);
             if (picture == null)
             {
                 return BadRequest("Picture doesn't exist");
@@ -195,7 +194,7 @@ namespace ImageGalleries.WebApi.Controllers
             var pictureId = request.PictureId;
             var description = request.Description;
 
-            var picture = await _pictureRepository.GetPicture(pictureId);
+            var picture = await _pictureRepository.GetPictureTracking(pictureId);
             if (picture == null)
             {
                 return BadRequest("Picture doesn't exist");

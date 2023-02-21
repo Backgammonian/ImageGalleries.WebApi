@@ -185,7 +185,7 @@ namespace ImageGalleries.WebApi.Controllers
             var newName = request.NewName;
             var newDescription = request.NewDescription;
 
-            var gallery = await _galleryRepository.GetGallery(galleryId);
+            var gallery = await _galleryRepository.GetGalleryTracking(galleryId);
             if (gallery == null)
             {
                 return BadRequest("Gallery doesn't exist");
@@ -219,7 +219,7 @@ namespace ImageGalleries.WebApi.Controllers
 
             var galleryId = request.GalleryId;
 
-            var gallery = await _galleryRepository.GetGallery(galleryId);
+            var gallery = await _galleryRepository.GetGalleryTracking(galleryId);
             if (gallery == null)
             {
                 return BadRequest("Gallery doesn't exist");
